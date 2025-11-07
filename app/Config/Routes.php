@@ -12,7 +12,8 @@ $routes->get('/peraturan', 'Front\Home::peraturan');
 $routes->get('/jadwal', 'Front\Home::jadwal');
 $routes->get('/login', 'Front\Home::login');
 // Frontend list buku
-$routes->get('/list-buku', 'Front\ViewBukuController::index');
+$routes->get('/list-buku', 'Frontend\ViewBukuController::index');
+$routes->get('/list-buku/detail/(:num)', 'Frontend\ViewBukuController::detail/$1');
 
 
 //backend
@@ -26,7 +27,14 @@ $routes->group('backend', function($routes) {
     $routes->get('buku_list', 'Backend\BukuController::index');
     $routes->get('peminjaman', 'Backend\PinjamanController::index');
     $routes->get('denda', 'Backend\DendaController::index');
+    $routes->get('denda/pdf', 'Backend\DendaController::pdf');
     $routes->get('riwayat', 'Backend\RiwayatController::index');
+    $routes->get('register', 'Backend\UserController::index');
+    $routes->post('register/create', 'Backend\UserController::create');
+    $routes->get('register/edit/(:num)', 'Backend\UserController::edit/$1');
+    $routes->post('register/update/(:num)', 'Backend\UserController::update/$1');
+    $routes->post('register/delete/(:num)', 'Backend\UserController::delete/$1');
+    $routes->get('riwayat/pdf', 'Backend\RiwayatController::pdf');
     $routes->post('riwayat/delete/(:num)', 'Backend\RiwayatController::delete/$1');
     // Pinjaman create
     $routes->post('peminjaman/create', 'Backend\PinjamanController::create');

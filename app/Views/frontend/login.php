@@ -28,14 +28,14 @@
 
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-600 mb-1">Username</label>
-                <input type="text" id="username" name="username"
-                       class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100">
+          <input type="text" id="username" name="username"
+              class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100 text-black placeholder-black">
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Password</label>
-                <input type="password" id="password" name="password"
-                       class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100">
+          <input type="password" id="password" name="password"
+              class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100 text-black placeholder-black">
             </div>
 
             <div class="flex items-center space-x-2">

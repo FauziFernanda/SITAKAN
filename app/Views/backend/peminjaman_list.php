@@ -31,8 +31,15 @@
         }
     ?>
       <tr class="border-t border-gray-700">
-        <td class="px-6 py-4"><?= esc($r['nama_siswa'] ?? '-') ?></td>
-        <td class="px-6 py-4"><?= esc($r['judul_buku'] ?? '-') ?></td>
+        <?php
+          // determine if this loan is overdue: due date (tgl_kembali) before today and not yet returned (tgl_selesai empty)
+          $isLate = false;
+          if (!empty($r['tgl_kembali']) && (empty($r['tgl_selesai']) || $r['tgl_selesai'] === '0000-00-00')) {
+            try { $isLate = (new DateTime($r['tgl_kembali'])) < new DateTime('today'); } catch(Exception $e) { $isLate = false; }
+          }
+        ?>
+        <td class="px-6 py-4 <?= $isLate ? 'text-red-600 font-semibold' : '' ?>"><?= esc($r['nama_siswa'] ?? '-') ?></td>
+        <td class="px-6 py-4 <?= $isLate ? 'text-red-600 font-semibold' : '' ?>"><?= esc($r['judul_buku'] ?? '-') ?></td>
         <td class="px-6 py-4">
           <a href="#" class="text-white font-semibold btn-details"
              data-id="<?= esc($r['id_pinjam'] ?? '') ?>"

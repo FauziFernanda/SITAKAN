@@ -8,6 +8,7 @@ class RiwayatModel extends Model
 {
     protected $table = 'riwayat';
     protected $primaryKey = 'id_riwayat';
-    protected $allowedFields = ['status', 'keterangan'];
+    // allow storing id_pinjam so we can reference the original peminjaman
+    protected $allowedFields = ['id_pinjam', 'status', 'keterangan'];
     protected $useTimestamps = false;
 }

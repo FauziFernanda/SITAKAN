@@ -203,6 +203,18 @@ class PinjamanController extends BaseController
             $today = date('Y-m-d');
             $pinjamModel->update($id, ['tgl_selesai' => $today]);
 
+            // Insert a row into riwayat table to record the return (if not already present)
+            $riwayatModel = new \App\Models\RiwayatModel();
+            // check if an entry already exists for this id_pinjam
+            $exists = $riwayatModel->where('id_pinjam', $id)->first();
+            if (!$exists) {
+                $riwayatModel->insert([
+                    'id_pinjam' => $id,
+                    'status' => 'selesai',
+                    'keterangan' => 'Good'
+                ]);
+            }
+
             $db->transComplete();
             if ($db->transStatus() === false) {
                 return $this->response->setJSON(['success' => false, 'message' => 'Gagal memperbarui data']);

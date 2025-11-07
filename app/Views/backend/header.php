@@ -39,6 +39,12 @@
           Riwayat
         </a>
       </li>
+      <li>
+        <a href="<?= base_url('backend/register') ?>" class="sidebar-link <?= (uri_string() == 'backend/register') ? 'active' : '' ?>">
+          <img src="<?= base_url('assets/icons/register.png') ?>" alt="Register" class="w-6 h-9 mr-2">
+          Register
+        </a>
+      </li>
     </ul>
   </div>
 

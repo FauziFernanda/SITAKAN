@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Riwayat Peminjaman</title>
+    <title>Laporan Denda</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,7 +25,7 @@
         }
         .section-title {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: normal;
             margin-bottom: 20px;
         }
         table {
@@ -56,11 +56,11 @@
 </head>
 <body>
     <div class="header">
-        <div class="main-title">LAPORAN RIWAYAT SISWA MEMINJAMAN BUKU</div>
+        <div class="main-title">LAPORAN DENDA SISWA PEMINJAMAN BUKU</div>
         <div class="subtitle">DIPERPUSTAKAAN SDN 11 TARATAK, SURIAN</div>
     </div>
 
-    <div class="section-title">Riwayat Peminjaman</div>
+    <div class="section-title">Berikut nama - nama peminjam yang dikenakan denda</div>
 
     <table>
         <thead>
@@ -69,19 +69,19 @@
                 <th>Nama Siswa</th>
                 <th>Kelas</th>
                 <th>Judul Buku</th>
-                <th>Status</th>
-                <th>Keterangan</th>
+                <th>Telat</th>
+                <th>Total Denda</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($riwayats as $i => $r): ?>
+            <?php foreach ($dendas as $i => $d): ?>
                 <tr>
                     <td><?= $i + 1 ?></td>
-                    <td><?= esc($r['nama_siswa'] ?? '-') ?></td>
-                    <td><?= esc($r['kelas'] ?? '-') ?></td>
-                    <td><?= esc($r['judul_buku'] ?? '-') ?></td>
-                    <td>Selesai</td>
-                    <td>Good</td>
+                    <td><?= esc($d['nama_siswa'] ?? '-') ?></td>
+                    <td><?= esc($d['kelas'] ?? '-') ?></td>
+                    <td><?= esc($d['judul_buku'] ?? '-') ?></td>
+                    <td><?= $d['telat_hari'] ?? 0 ?> Hari</td>
+                    <td>Rp. <?= number_format($d['telat_hari'] * 500, 0, ',', '.') ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
