@@ -87,6 +87,11 @@ class RiwayatController extends BaseController
         // Sort by date descending
         krsort($groupedRiwayats);
 
+        // Debug data sebelum dikirim ke view
+        foreach ($riwayats as $r) {
+            log_message('debug', 'Data riwayat: ' . json_encode($r));
+        }
+
         // Return the grouped data to the view
         return view('backend/riwayat_list', [
             'groupedRiwayats' => $groupedRiwayats
@@ -112,40 +117,59 @@ class RiwayatController extends BaseController
 
     public function delete($id = null)
     {
-        if (!$this->request->isAJAX() || empty($id)) {
+        // Debug print
+        log_message('debug', 'Request ID: ' . $id);
+        log_message('debug', 'Request Method: ' . $this->request->getMethod());
+        log_message('debug', 'Raw Request Body: ' . json_encode($this->request->getRawInput()));
+        
+        if (empty($id)) {
+            log_message('error', 'Invalid ID received');
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Invalid request'
+                'message' => 'ID peminjaman tidak valid'
             ]);
         }
 
-        $pinjamModel = new PinjamModel();
         $db = \Config\Database::connect();
-        
         $db->transStart();
+
         try {
-            // Simply delete the record
+            $pinjamModel = new PinjamModel();
+            $pinjam = $pinjamModel->find($id);
+
+            if (!$pinjam) {
+                log_message('error', 'Peminjaman not found with ID: ' . $id);
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Data peminjaman tidak ditemukan'
+                ]);
+            }
+
+            // Debug log
+            log_message('debug', 'Found peminjaman: ' . json_encode($pinjam));
+
+            // Delete the record
             $result = $pinjamModel->delete($id);
             
-            $db->transComplete();
-            
-            if ($result === false || $db->transStatus() === false) {
+            if ($result) {
+                $db->transCommit();
+                log_message('info', 'Successfully deleted peminjaman with ID: ' . $id);
+                session()->setFlashdata('success', 'Data berhasil dihapus');
+                return redirect()->back();
+            } else {
+                $db->transRollback();
+                log_message('error', 'Failed to delete peminjaman with ID: ' . $id);
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Gagal menghapus data'
                 ]);
             }
-
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Data berhasil dihapus'
-            ]);
-            
         } catch (\Exception $e) {
             $db->transRollback();
+            log_message('error', 'Exception when deleting: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan'
+                'message' => 'Terjadi kesalahan sistem'
             ]);
         }
     }

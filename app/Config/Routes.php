@@ -34,7 +34,7 @@ $routes->group('backend', ['filter' => 'auth'], function($routes) {
     $routes->post('register/update/(:num)', 'Backend\UserController::update/$1');
     $routes->post('register/delete/(:num)', 'Backend\UserController::delete/$1');
     $routes->get('riwayat/pdf', 'Backend\RiwayatController::pdf');
-    $routes->post('riwayat/delete/(:num)', 'Backend\RiwayatController::delete/$1');
+    $routes->get('riwayat/delete/(:num)', 'Backend\RiwayatController::delete/$1');
     // Pinjaman create
     $routes->post('peminjaman/create', 'Backend\PinjamanController::create');
     // Pinjaman return (mark finished and restore stock)

@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-[#1E1E1E] text-gray-200 font-poppins">
@@ -29,11 +30,22 @@
         showCancelButton: true,
         confirmButtonColor: '#25622D',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Logout',
-        cancelButtonText: 'Batal'
+        confirmButtonText: 'Ya, Keluar',
+        cancelButtonText: 'Batal',
+        reverseButtons: true,
+        focusCancel: true
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = '<?= base_url('auth/logout') ?>';
+          Swal.fire({
+            title: 'Logout Berhasil',
+            text: 'Anda akan dialihkan dalam beberapa saat...',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+          }).then(() => {
+            window.location.href = '<?= base_url('auth/logout') ?>';
+          });
         }
       });
     }

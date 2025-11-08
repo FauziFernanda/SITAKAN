@@ -57,7 +57,7 @@
       <span class="text-sm font-medium text-white"><?= session()->get('nama') ?? 'User' ?></span>
     </div>
 
-    <a href="#" onclick="confirmLogout(event)" class="logout-btn flex items-center justify-center gap-2">
+    <a href="<?= base_url('auth/logout') ?>" onclick="return confirmLogout(event)" class="logout-btn flex items-center justify-center gap-2">
       <img src="<?= base_url('assets/icons/logout.png') ?>" alt="Logout" class="w-5 h-5">
       Log out
     </a>

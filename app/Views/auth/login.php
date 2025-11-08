@@ -29,7 +29,7 @@
     <?php endif; ?>
 
     <!-- Card Login -->
-    <div class="bg-[#ECF9EF] border border-[#2E8B57] rounded-sm shadow-sm w-11/12 md:w-[420px] p-8">
+    <div class="bg-[#ECF9EF] border border-[#2E8B57] rounded-sm shadow-sm w-11/12 md:w-[420px] p-8 pb-4">
         <form action="<?= site_url('auth/login') ?>" method="post" class="space-y-5">
             <?= csrf_field() ?>
 
@@ -37,14 +37,15 @@
                 <label for="username" class="block text-sm font-medium text-gray-600 mb-1">Username</label>
                 <input type="text" id="username" name="username" 
                     class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100 text-black placeholder-black"
-                    value="<?= old('username') ?>" required>
+                    value="<?= old('username') ?>">
+                <div class="error-message text-red-500 text-sm mt-1 hidden">Masukkan Username Anda</div>
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Password</label>
                 <input type="password" id="password" name="password"
-                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100 text-black placeholder-black"
-                    required>
+                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#25622D] bg-gray-100 text-black placeholder-black">
+                <div class="error-message text-red-500 text-sm mt-1 hidden">Masukkan Password Anda</div>
             </div>
 
             <div class="flex items-center space-x-2">
@@ -57,7 +58,50 @@
                 LOGIN
             </button>
         </form>
+
+        <!-- Link Kembali ke Home -->
+    <div class="mt-8 text-center">
+        <a href="<?= site_url('/') ?>" class="text-[#25622D] hover:text-[#1E4E22] font-medium">
+            <span class="inline-block transform hover:-translate-x-1 transition-transform duration-200">←</span> 
+            Kembali ke Home
+        </a>
+    </div>
     </div>
 
+    
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            let hasError = false;
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(el => el.classList.add('hidden'));
+            
+            // Validate username
+            if (!username.value.trim()) {
+                username.nextElementSibling.classList.remove('hidden');
+                hasError = true;
+            }
+            
+            // Validate password
+            if (!password.value.trim()) {
+                password.nextElementSibling.classList.remove('hidden');
+                hasError = true;
+            }
+            
+            if (hasError) {
+                e.preventDefault();
+            }
+        });
+
+        // Hide error message when user starts typing
+        ['username', 'password'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                this.nextElementSibling.classList.add('hidden');
+            });
+        });
+    </script>
 </body>
 </html>

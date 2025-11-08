@@ -7,8 +7,9 @@ use CodeIgniter\Model;
 class PinjamModel extends Model
 {
     protected $table = 'pinjams';
-    // Sesuaikan dengan skema DB Anda: primary key di diagram adalah 'id_pinjam'
     protected $primaryKey = 'id_pinjam';
+    protected $returnType = 'array';
+    protected $useSoftDeletes = false;
     protected $allowedFields = [
         'id_buku',
         'nama_siswa',
