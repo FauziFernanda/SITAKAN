@@ -27,6 +27,14 @@
         title: 'Konfirmasi Logout',
         text: "Apakah anda yakin ingin keluar?",
         icon: 'warning',
+        width: '350px',
+          customClass: {
+            container: 'swal-custom-height',
+            popup: 'swal-custom-height',
+            icon: 'swal-custom-height',
+            title: 'swal-custom-height',
+            htmlContainer: 'swal-custom-height'
+          },
         showCancelButton: true,
         confirmButtonColor: '#25622D',
         cancelButtonColor: '#d33',
@@ -40,6 +48,14 @@
             title: 'Logout Berhasil',
             text: 'Anda akan dialihkan dalam beberapa saat...',
             icon: 'success',
+            width: '400px', 
+            customClass: {
+              container: 'swal-custom-height',
+              popup: 'swal-custom-height',
+              icon: 'swal-custom-height',
+              title: 'swal-custom-height',
+              htmlContainer: 'swal-custom-height'
+            },
             showConfirmButton: false,
             timer: 1500,
             timerProgressBar: true

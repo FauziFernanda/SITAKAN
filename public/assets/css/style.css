@@ -1009,3 +1009,20 @@ body {
 
 
 
+/* Untuk mengecilkan popup logout */
+.swal-custom-height .swal2-icon {
+  font-size: 1em; /* Mengecilkan ikon */
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.swal-custom-height .swal2-title {
+  font-size: 1.25em; /* Mengecilkan judul */
+  padding-top: 15px;
+}
+
+.swal-custom-height .swal2-html-container {
+  font-size: 0.9em; /* Mengecilkan teks */
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
