@@ -51,7 +51,7 @@ Daftar Buku
                             <div class="book-title"><?= esc($b['judul']) ?></div>
                             <div class="book-meta">
                                 <div class="book-stock">Stok : <?= esc($b['stok'] ?? '0') ?></div>
-                                <button type="button" data-book="<?= esc($bookJsonB64) ?>" class="btn-details">Details</button>
+                                <button type="button" data-book="<?= esc($bookJsonB64) ?>" class="btn-detailss">Details</button>
                             </div>
                         </div>
                     <?php endforeach; ?>

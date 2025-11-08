@@ -1,4 +1,4 @@
-<aside class="w-64 bg-[#181818] text-gray-300 flex flex-col justify-between min-h-screen shadow-lg">
+<aside class="fixed left-0 top-0 bottom-0 w-64 bg-[#181818] text-gray-300 flex flex-col justify-between shadow-lg">
   <div>
     <!-- Logo SITAKAN -->
     <div class="flex items-center gap-3 p-6 border-b border-gray-700">
@@ -39,12 +39,14 @@
           Riwayat
         </a>
       </li>
+      <?php if(session()->get('role') === 'admin'): ?>
       <li>
         <a href="<?= base_url('backend/register') ?>" class="sidebar-link <?= (uri_string() == 'backend/register') ? 'active' : '' ?>">
           <img src="<?= base_url('assets/icons/register.png') ?>" alt="Register" class="w-6 h-9 mr-2">
           Register
         </a>
       </li>
+      <?php endif; ?>
     </ul>
   </div>
 
@@ -52,10 +54,10 @@
   <div class="p-6 border-t border-gray-700">
     <div class="flex items-center gap-3 mb-4">
       <img src="<?= base_url('assets/icons/profile.png') ?>" alt="Profile" class="w-6 h-6">
-      <span class="text-sm font-medium text-white">Fauzi Fernanda</span>
+      <span class="text-sm font-medium text-white"><?= session()->get('nama') ?? 'User' ?></span>
     </div>
 
-    <a href="<?= base_url('logout') ?>" class="logout-btn flex items-center justify-center gap-2">
+    <a href="#" onclick="confirmLogout(event)" class="logout-btn flex items-center justify-center gap-2">
       <img src="<?= base_url('assets/icons/logout.png') ?>" alt="Logout" class="w-5 h-5">
       Log out
     </a>

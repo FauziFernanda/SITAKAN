@@ -1,35 +1,43 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= $this->renderSection('title') ?> | SITAKAN Backend</title>
-  <link rel="icon" href="<?= base_url('assets/img/logo.png') ?>">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
-
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $this->renderSection('title') ?> | SITAKAN Backend</title>
+    <link rel="icon" href="<?= base_url('assets/img/logo.png') ?>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+<body class="bg-[#1E1E1E] text-gray-200 font-poppins">
+    <div class="flex h-screen overflow-hidden">
+        <?= $this->include('backend/header') ?>
+        
+        <main class="flex-1 overflow-y-auto ml-64 p-8 bg-[#1E1E1E]">
+            <?= $this->renderSection('content') ?>
+        </main>
+    </div>
 
-<body class="bg-[#1E1E1E] text-gray-200 font-poppins h-screen overflow-hidden">
-
-  <div class="backend-layout flex h-screen">
-    <!-- Sidebar -->
-    <?= $this->include('backend/header') ?>
-
-    <!-- Konten utama -->
-    <main class="backend-content flex-1 overflow-y-auto p-8 bg-[#1E1E1E]">
-      <?= $this->renderSection('content') ?>
-    </main>
-  </div>
-</div>
-
+    <script>
+    function confirmLogout(e) {
+      if(e) e.preventDefault();
+      Swal.fire({
+        title: 'Konfirmasi Logout',
+        text: "Apakah anda yakin ingin keluar?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#25622D',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '<?= base_url('auth/logout') ?>';
+        }
+      });
+    }
+    </script>
   <?= $this->renderSection('scripts') ?>
-
 </body>
 </html>

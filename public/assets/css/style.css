@@ -981,6 +981,13 @@ body {
 .book-title { font-size: 15px; line-height: 1.35; font-weight: 700; color: #0f172a; text-align:center; margin: 12px 0 10px; }
 .book-meta { width: 100%; display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .book-stock { color:#6b7280; font-size: 14px; }
+.btn-detailss { background:#25622D; color:#fff; padding:10px 16px; border-radius:12px; text-decoration:none; display:inline-block; font-weight:700; }
+.btn-detailss:hover {
+  background:#1f5a27; 
+
+}
+
+
 .btn-details {
   background: transparent;      /* tanpa warna isi */
   color: white;                 /* teks putih */
@@ -996,16 +1003,8 @@ body {
   color: white;                 /* tetap putih */
 }
 
-
 /* ensure full-bleed green background sits flush with page edges */
 .full-bleed-green { width: 100%; background: #F0FFF3; }
-
-/* ====== REGISTER PAGE ====== */
-.register-list { margin-top: 12px; }
-.register-table th, .register-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.btn-add { background: #0f7a63; color: #fff; padding: 10px 14px; border-radius: 8px; font-weight: 700; }
-.modal-input { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; }
-
 
 
 

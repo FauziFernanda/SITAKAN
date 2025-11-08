@@ -22,6 +22,6 @@ class Home extends BaseController
         
      public function login()
     {
-        return view('frontend/login');
+        return view('auth/login');
     }
 }

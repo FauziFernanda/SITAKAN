@@ -10,20 +10,19 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Front\Home::index');
 $routes->get('/peraturan', 'Front\Home::peraturan');
 $routes->get('/jadwal', 'Front\Home::jadwal');
+
+// Frontend Auth
 $routes->get('/login', 'Front\Home::login');
+$routes->post('/auth/login', 'AuthController::login');
+$routes->get('/auth/logout', 'AuthController::logout');
+
 // Frontend list buku
 $routes->get('/list-buku', 'Frontend\ViewBukuController::index');
 $routes->get('/list-buku/detail/(:num)', 'Frontend\ViewBukuController::detail/$1');
 
-
-//backend
-$routes->group('backend', function($routes) {
-    $routes->get('home', 'Backend\Home::index');
-});
-$routes->get('/admin/buku', 'Backend\BukuController::index');
 // ROUTE BACKEND
-$routes->group('backend', function($routes) {
-    $routes->get('home', 'Backend\DashboardController::index');
+$routes->group('backend', ['filter' => 'auth'], function($routes) {
+    $routes->get('home', 'Backend\Home::index');
     $routes->get('buku_list', 'Backend\BukuController::index');
     $routes->get('peminjaman', 'Backend\PinjamanController::index');
     $routes->get('denda', 'Backend\DendaController::index');
