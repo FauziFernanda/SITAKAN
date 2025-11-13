@@ -73,7 +73,9 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            'csrf',
+            'csrf' => ['except' => [
+                'backend/kategori/create',
+            ]],
             'invalidchars',
         ],
         'after' => [

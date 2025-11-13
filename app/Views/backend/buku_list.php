@@ -163,6 +163,7 @@
     <button id="closeModal" class="absolute -top-3 -right-3 bg-[#1E1E1E] text-white rounded-full w-8 h-8 flex items-center justify-center">X</button>
     <h2 class="text-2xl font-semibold text-[#111827] mb-4 text-center">Add Kategori</h2>
   <form id="formKategori" action="<?= base_url('backend/kategori/create') ?>" method="post" class="space-y-4" novalidate>
+      <?= csrf_field() ?>
       <div>
         <label for="nama_kategori" class="block text-sm text-[#374151] mb-2">Masukkan Jenis Buku</label>
    <input id="nama_kategori" name="nama_kategori" type="text" placeholder="Contoh: Matematika, Fisika, Sejarah"
@@ -525,10 +526,26 @@
           const submitBtn = document.getElementById('btnCreate');
           submitBtn.disabled = true; submitBtn.textContent = 'Creating...';
 
+          // Use FormData so the CSRF hidden input (from <?= csrf_field() ?>) is sent automatically
+          const fd = new FormData(form);
+          fd.set('nama_kategori', nama);
+
+          // Ensure CSRF token is present and up-to-date (replace if exists)
+          const csrfName = '<?= csrf_token() ?>';
+          const csrfHash = '<?= csrf_hash() ?>';
+          try { fd.set(csrfName, csrfHash); } catch (e) { /* ignore if not supported */ }
+
+          // Debug: list FormData entries to browser console to verify tokens/fields
+          try {
+            const entries = [];
+            for (const pair of fd.entries()) entries.push(pair);
+            console.debug('DEBUG kategori submit FormData:', entries);
+          } catch (e) { console.debug('DEBUG: cannot enumerate FormData', e); }
+
           fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ nama_kategori: nama })
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': '<?= csrf_hash() ?>' }
           }).then(resp => {
             // always try to parse JSON, even for 4xx/5xx so we can show server messages
             return resp.json().then(data => ({ ok: resp.ok, status: resp.status, data })).catch(() => ({ ok: resp.ok, status: resp.status, data: {} }));

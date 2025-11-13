@@ -12,7 +12,13 @@ class KategoriController extends BaseController
         $model = new KategoriModel();
 
         // accept JSON or form-data
-        $data = $this->request->getJSON(true);
+        try {
+            $data = $this->request->getJSON(true);
+        } catch (\Throwable $e) {
+            // getJSON throws when request body isn't valid JSON (e.g. multipart/form-data)
+            $data = [];
+        }
+
         if (empty($data)) {
             // fallback to post
             $jenis = $this->request->getPost('nama_kategori');
