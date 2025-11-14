@@ -75,7 +75,7 @@
           <thead class="bg-[#4b4b4b] text-white">
             <tr>
               <th class="px-6 py-4">Nama Siswa</th>
-              <th class="px-6 py-4">Kelas</th>
+              <th class="px-6 py-4">Judul Buku</th>
               <th class="px-6 py-4">Tanggal Pinjam</th>
               <th class="px-6 py-4">Tanggal Kembali</th>
               <th class="px-6 py-4">Status</th>
@@ -86,7 +86,7 @@
             <?php foreach ($group['items'] as $r): ?>
               <tr class="border-t border-gray-700">
                 <td class="px-6 py-4"><?= esc($r['nama_siswa'] ?? '-') ?></td>
-                <td class="px-6 py-4"><?= esc($r['kelas'] ?? '-') ?></td>
+                <td class="px-6 py-4"><?= esc($r['judul'] ?? '-') ?></td>
                 <td class="px-6 py-4"><?= !empty($r['tgl_pinjam']) ? date('d/m/Y', strtotime($r['tgl_pinjam'])) : '-' ?></td>
                 <td class="px-6 py-4"><?= !empty($r['tgl_kembali']) ? date('d/m/Y', strtotime($r['tgl_kembali'])) : '-' ?></td>
                 <td class="px-6 py-4">

@@ -67,7 +67,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama Siswa</th>
-                <th>Kelas</th>
+                <th>Judul Buku</th>
                 <th>Tgl Pinjam</th>
                 <th>Tgl Kembali</th>
                 <th>Status</th>
@@ -78,7 +78,7 @@
                 <tr>
                     <td><?= $i + 1 ?></td>
                     <td><?= esc($r['nama_siswa'] ?? '-') ?></td>
-                    <td><?= esc($r['kelas'] ?? '-') ?></td>
+                    <td><?= esc($r['judul'] ?? '-') ?></td>
                     <td><?= !empty($r['tgl_pinjam']) ? date('d/m/Y', strtotime($r['tgl_pinjam'])) : '-' ?></td>
                     <td><?= !empty($r['tgl_kembali']) ? date('d/m/Y', strtotime($r['tgl_kembali'])) : '-' ?></td>
                     <td><?= esc($r['status'] ?? 'Selesai') ?></td>

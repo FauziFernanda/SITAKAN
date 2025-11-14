@@ -245,9 +245,14 @@ class PinjamanController extends BaseController
             // Set tgl_selesai to today
             $today = date('Y-m-d');
 
+            // Fetch book info to get title and stok
+            $buku = $bukuModel->find($pinjam['id_buku']);
+            $judulBuku = $buku['judul'] ?? null;
+
             // Prepare data to insert into riwayat table with only required columns
             $riwayatData = [
                 'nama_siswa' => $pinjam['nama_siswa'],
+                'judul' => $judulBuku,
                 'kelas' => $pinjam['kelas'],
                 'tgl_pinjam' => $pinjam['tgl_pinjam'],
                 'tgl_kembali' => $pinjam['tgl_kembali'],
@@ -260,7 +265,6 @@ class PinjamanController extends BaseController
             $riwayatModel->insert($riwayatData);
 
             // Restore stock (always restore when completing)
-            $buku = $bukuModel->find($pinjam['id_buku']);
             if ($buku) {
                 $stok = (int)$buku['stok'];
                 $bukuModel->update($buku['id_buku'], ['stok' => $stok + 1]);

@@ -12,6 +12,7 @@ class RiwayatModel extends Model
     protected $useSoftDeletes = false;
     protected $allowedFields = [
         'nama_siswa',
+        'judul',
         'kelas',
         'tgl_pinjam',
         'tgl_kembali',
