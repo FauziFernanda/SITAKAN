@@ -68,9 +68,9 @@
                 <th>No</th>
                 <th>Nama Siswa</th>
                 <th>Kelas</th>
-                <th>Judul Buku</th>
+                <th>Tgl Pinjam</th>
+                <th>Tgl Kembali</th>
                 <th>Status</th>
-                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -79,9 +79,9 @@
                     <td><?= $i + 1 ?></td>
                     <td><?= esc($r['nama_siswa'] ?? '-') ?></td>
                     <td><?= esc($r['kelas'] ?? '-') ?></td>
-                    <td><?= esc($r['judul_buku'] ?? '-') ?></td>
-                    <td>Selesai</td>
-                    <td>Good</td>
+                    <td><?= !empty($r['tgl_pinjam']) ? date('d/m/Y', strtotime($r['tgl_pinjam'])) : '-' ?></td>
+                    <td><?= !empty($r['tgl_kembali']) ? date('d/m/Y', strtotime($r['tgl_kembali'])) : '-' ?></td>
+                    <td><?= esc($r['status'] ?? 'Selesai') ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

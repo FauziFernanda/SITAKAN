@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if (!pendingReturnId) return;
     const fd = new FormData();
     fd.append(csrfName, csrfHash);
-    fetch('<?= base_url('backend/peminjaman/return') ?>/' + pendingReturnId, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} })
+    fetch('<?= base_url('backend/peminjaman/complete') ?>/' + pendingReturnId, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} })
       .then(r => r.json())
       .then(j => {
         showToast(j.message || (j.success? 'Berhasil' : 'Gagal'), !!j.success);

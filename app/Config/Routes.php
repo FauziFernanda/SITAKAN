@@ -39,6 +39,8 @@ $routes->group('backend', ['filter' => 'auth'], function($routes) {
     $routes->post('peminjaman/create', 'Backend\PinjamanController::create');
     // Pinjaman return (mark finished and restore stock)
     $routes->post('peminjaman/return/(:num)', 'Backend\PinjamanController::return/$1');
+    // Pinjaman complete (move to riwayat table and delete from pinjams)
+    $routes->post('peminjaman/complete/(:num)', 'Backend\PinjamanController::complete/$1');
     // Pinjaman delete (remove peminjaman and restore stock)
     $routes->post('peminjaman/delete/(:num)', 'Backend\PinjamanController::delete/$1');
     // Kategori routes

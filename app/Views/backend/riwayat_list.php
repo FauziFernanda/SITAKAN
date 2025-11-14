@@ -75,7 +75,7 @@
           <thead class="bg-[#4b4b4b] text-white">
             <tr>
               <th class="px-6 py-4">Nama Siswa</th>
-              <th class="px-6 py-4">Judul Buku</th>
+              <th class="px-6 py-4">Kelas</th>
               <th class="px-6 py-4">Tanggal Pinjam</th>
               <th class="px-6 py-4">Tanggal Kembali</th>
               <th class="px-6 py-4">Status</th>
@@ -86,16 +86,16 @@
             <?php foreach ($group['items'] as $r): ?>
               <tr class="border-t border-gray-700">
                 <td class="px-6 py-4"><?= esc($r['nama_siswa'] ?? '-') ?></td>
-                <td class="px-6 py-4"><?= esc($r['judul_buku'] ?? '-') ?></td>
+                <td class="px-6 py-4"><?= esc($r['kelas'] ?? '-') ?></td>
                 <td class="px-6 py-4"><?= !empty($r['tgl_pinjam']) ? date('d/m/Y', strtotime($r['tgl_pinjam'])) : '-' ?></td>
-                <td class="px-6 py-4"><?= !empty($r['tgl_selesai']) ? date('d/m/Y', strtotime($r['tgl_selesai'])) : '-' ?></td>
+                <td class="px-6 py-4"><?= !empty($r['tgl_kembali']) ? date('d/m/Y', strtotime($r['tgl_kembali'])) : '-' ?></td>
                 <td class="px-6 py-4">
                   <span class="px-2 py-1 rounded text-sm font-medium bg-green-600 text-white">Selesai</span>
                 </td>
                 <td class="px-6 py-4">
                   <button type="button" 
                           class="btn-delete bg-red-700 text-white px-3 py-1 rounded"
-                          data-id="<?= esc($r['id_pinjam']) ?>">
+                          data-id="<?= esc($r['id_riwayat']) ?>">
                     Hapus
                   </button>
                 </td>

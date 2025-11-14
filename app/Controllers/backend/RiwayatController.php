@@ -3,7 +3,7 @@
 namespace App\Controllers\Backend;
 
 use App\Controllers\BaseController;
-use App\Models\PinjamModel;
+use App\Models\RiwayatModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -11,14 +11,11 @@ class RiwayatController extends BaseController
 {
     public function pdf()
     {
-        $pinjamModel = new PinjamModel();
+        $riwayatModel = new RiwayatModel();
         
-        // Get all completed loans
-        $riwayats = $pinjamModel
-            ->select('pinjams.*, bukus.judul as judul_buku')
-            ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
-            ->where('pinjams.tgl_selesai IS NOT NULL')
-            ->orderBy('pinjams.tgl_selesai', 'DESC')
+        // Get all riwayat data
+        $riwayats = $riwayatModel
+            ->orderBy('tgl_selesai', 'DESC')
             ->findAll();
 
         // Format today's date in Indonesian
@@ -57,15 +54,11 @@ class RiwayatController extends BaseController
 
     public function index()
     {
-        $pinjamModel = new PinjamModel();
+        $riwayatModel = new RiwayatModel();
         
-        // Hanya ambil peminjaman yang sudah selesai (tgl_selesai terisi)
-        $riwayats = $pinjamModel
-            ->select('pinjams.*, bukus.judul as judul_buku')
-            ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
-            ->where('pinjams.tgl_selesai IS NOT NULL')
-            ->where('pinjams.tgl_selesai !=', '0000-00-00')
-            ->orderBy('pinjams.tgl_selesai', 'DESC')
+        // Get all riwayat data
+        $riwayats = $riwayatModel
+            ->orderBy('tgl_selesai', 'DESC')
             ->findAll();
 
         // Group by tgl_selesai
@@ -126,7 +119,7 @@ class RiwayatController extends BaseController
             log_message('error', 'Invalid ID received');
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'ID peminjaman tidak valid'
+                'message' => 'ID riwayat tidak valid'
             ]);
         }
 
@@ -134,31 +127,31 @@ class RiwayatController extends BaseController
         $db->transStart();
 
         try {
-            $pinjamModel = new PinjamModel();
-            $pinjam = $pinjamModel->find($id);
+            $riwayatModel = new RiwayatModel();
+            $riwayat = $riwayatModel->find($id);
 
-            if (!$pinjam) {
-                log_message('error', 'Peminjaman not found with ID: ' . $id);
+            if (!$riwayat) {
+                log_message('error', 'Riwayat not found with ID: ' . $id);
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Data peminjaman tidak ditemukan'
+                    'message' => 'Data riwayat tidak ditemukan'
                 ]);
             }
 
             // Debug log
-            log_message('debug', 'Found peminjaman: ' . json_encode($pinjam));
+            log_message('debug', 'Found riwayat: ' . json_encode($riwayat));
 
             // Delete the record
-            $result = $pinjamModel->delete($id);
+            $result = $riwayatModel->delete($id);
             
             if ($result) {
                 $db->transCommit();
-                log_message('info', 'Successfully deleted peminjaman with ID: ' . $id);
+                log_message('info', 'Successfully deleted riwayat with ID: ' . $id);
                 session()->setFlashdata('success', 'Data berhasil dihapus');
                 return redirect()->back();
             } else {
                 $db->transRollback();
-                log_message('error', 'Failed to delete peminjaman with ID: ' . $id);
+                log_message('error', 'Failed to delete riwayat with ID: ' . $id);
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Gagal menghapus data'

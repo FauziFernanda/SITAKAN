@@ -203,18 +203,6 @@ class PinjamanController extends BaseController
             $today = date('Y-m-d');
             $pinjamModel->update($id, ['tgl_selesai' => $today]);
 
-            // Insert a row into riwayat table to record the return (if not already present)
-            $riwayatModel = new \App\Models\RiwayatModel();
-            // check if an entry already exists for this id_pinjam
-            $exists = $riwayatModel->where('id_pinjam', $id)->first();
-            if (!$exists) {
-                $riwayatModel->insert([
-                    'id_pinjam' => $id,
-                    'status' => 'selesai',
-                    'keterangan' => 'Good'
-                ]);
-            }
-
             $db->transComplete();
             if ($db->transStatus() === false) {
                 return $this->response->setJSON(['success' => false, 'message' => 'Gagal memperbarui data']);
@@ -223,6 +211,73 @@ class PinjamanController extends BaseController
             return $this->response->setJSON(['success' => true, 'message' => 'Peminjaman berhasil dikembalikan']);
         } catch (\Exception $e) {
             $db->transRollback();
+            return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan']);
+        }
+    }
+
+    /**
+     * Complete a peminjaman: move to riwayat table, restore stock, and delete from pinjams.
+     */
+    public function complete($id = null)
+    {
+        $request = $this->request;
+        if (!$request->is('post')) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+        }
+
+        if (empty($id)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Missing id']);
+        }
+
+        $pinjamModel = new PinjamModel();
+        $riwayatModel = new \App\Models\RiwayatModel();
+        $bukuModel = new BukuModel();
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            $pinjam = $pinjamModel->find($id);
+            if (!$pinjam) {
+                $db->transComplete();
+                return $this->response->setJSON(['success' => false, 'message' => 'Data tidak ditemukan']);
+            }
+
+            // Set tgl_selesai to today
+            $today = date('Y-m-d');
+
+            // Prepare data to insert into riwayat table with only required columns
+            $riwayatData = [
+                'nama_siswa' => $pinjam['nama_siswa'],
+                'kelas' => $pinjam['kelas'],
+                'tgl_pinjam' => $pinjam['tgl_pinjam'],
+                'tgl_kembali' => $pinjam['tgl_kembali'],
+                'tgl_selesai' => $today,
+                'status' => 'selesai',
+                'keterangan' => 'Good'
+            ];
+
+            // Insert into riwayat
+            $riwayatModel->insert($riwayatData);
+
+            // Restore stock (always restore when completing)
+            $buku = $bukuModel->find($pinjam['id_buku']);
+            if ($buku) {
+                $stok = (int)$buku['stok'];
+                $bukuModel->update($buku['id_buku'], ['stok' => $stok + 1]);
+            }
+
+            // Delete from pinjams
+            $pinjamModel->delete($id);
+
+            $db->transComplete();
+            if ($db->transStatus() === false) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Gagal menyelesaikan peminjaman']);
+            }
+
+            return $this->response->setJSON(['success' => true, 'message' => 'Peminjaman berhasil diselesaikan']);
+        } catch (\Exception $e) {
+            $db->transRollback();
+            log_message('error', 'Complete peminjaman error: ' . $e->getMessage());
             return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan']);
         }
     }

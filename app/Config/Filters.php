@@ -75,6 +75,7 @@ class Filters extends BaseFilters
         'before' => [
             'csrf' => ['except' => [
                 'backend/kategori/create',
+                'backend/peminjaman/complete/*',
             ]],
             'invalidchars',
         ],
