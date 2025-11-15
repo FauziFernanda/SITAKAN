@@ -53,6 +53,7 @@
     <div class="modal-body">
       <?php if (!isset($editUser)): ?>
         <form method="post" action="<?= base_url('backend/register/create') ?>">
+          <?= csrf_field() ?>
           <div class="mb-3">
             <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
             <input type="text" name="nama" 
@@ -112,6 +113,7 @@
     <div class="modal-body">
       <?php if (isset($editUser)): ?>
         <form method="post" action="<?= base_url('backend/register/update/'.$editUser['id_user']) ?>">
+          <?= csrf_field() ?>
           <div class="mb-3">
             <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
             <input type="text" name="nama" 
