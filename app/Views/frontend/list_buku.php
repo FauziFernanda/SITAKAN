@@ -113,81 +113,8 @@ Daftar Buku
     </div>
 </div>
 
-<style>
-.modal {
-    z-index: 1000;
-}
-.modal-content {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-.main-image-container {
-    aspect-ratio: 3/4;
-    overflow: hidden;
-    max-width: 420px; /* limit main image width to reduce size */
-    margin: 0 auto;
-}
-.main-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* show whole cover and avoid cropping */
-    max-height: 360px; /* cap height */
-}
-.main-image-container {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    aspect-ratio: 3/4;
-    overflow: hidden;
-    max-width: 300px; /* smaller width so image card is compact */
-    margin: 0 auto;
-    padding: 6px; /* small padding to show stroke */
-    border-radius: 12px;
-    background: transparent; /* no large white area */
-    border: 1px solid rgba(0,0,0,0.08); /* thin stroke */
-    box-shadow: none; /* remove heavy shadow */
-}
-.main-image-container img.main-image {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    display:block;
-}
-.thumb-row {
-    display:flex;
-    gap:12px;
-    justify-content:center;
-    margin-top:12px;
-}
-.thumb {
-    width:72px;
-    height:72px;
-    aspect-ratio:1/1;
-    border-radius:8px;
-    overflow:hidden;
-    cursor:pointer;
-    transition:transform .18s ease, box-shadow .18s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-.thumb.active {
-    transform: translateY(-8px) scale(1.08);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.18);
-}
-.thumb img { width:100%; height:100%; object-fit:cover }
-.thumbnail {
-    aspect-ratio: 1;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-.thumbnail:hover {
-    opacity: 0.8;
-}
-.thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-</style>
+<!-- Pastikan link CSS utama sudah benar -->
+<link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
 
 <script>
 function showBookDetail(book) {

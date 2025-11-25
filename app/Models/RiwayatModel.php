@@ -11,6 +11,7 @@ class RiwayatModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $allowedFields = [
+        'id_pinjam',
         'nama_siswa',
         'judul',
         'kelas',

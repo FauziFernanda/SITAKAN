@@ -27,7 +27,7 @@
           $currentDate = $rowDate;
           $pretty = $rowDate ? date('l, d-m-Y', strtotime($rowDate)) : 'Tanggal tidak diketahui';
           echo "<div class=\"mb-4 mt-6\"><h4 class=\"text-gray-200 font-semibold\">".esc($pretty)."</h4></div>";
-          echo "<table class=\"w-full text-sm text-left border border-gray-700 peminjaman-table mb-6\"><thead class=\"bg-[#4b4b4b] text-white\"><tr><th class=\"px-6 py-4\">Nama Siswa</th><th class=\"px-6 py-4\">Judul Buku</th><th class=\"px-6 py-4\">Detail</th><th class=\"px-6 py-4\">Action</th></tr></thead><tbody>";
+          echo "<table class=\"w-full text-sm text-left border border-gray-700 peminjaman-table mb-6\" style=\"table-layout: fixed;\"><thead class=\"bg-[#4b4b4b] text-white\"><tr><th class=\"px-6 py-4\" style=\"width: 20%;\">Nama Siswa</th><th class=\"px-6 py-4\" style=\"width: 40%;\">Judul Buku</th><th class=\"px-6 py-4\" style=\"width: 18%;\">Detail</th><th class=\"px-6 py-4\" style=\"width: 22%;\">Action</th></tr></thead><tbody>";
         }
     ?>
       <tr class="border-t border-gray-700">
@@ -41,7 +41,7 @@
         <td class="px-6 py-4 <?= $isLate ? 'text-red-600 font-semibold' : '' ?>"><?= esc($r['nama_siswa'] ?? '-') ?></td>
         <td class="px-6 py-4 <?= $isLate ? 'text-red-600 font-semibold' : '' ?>"><?= esc($r['judul_buku'] ?? '-') ?></td>
         <td class="px-6 py-4">
-          <a href="#" class="text-white font-semibold btn-details"
+          <a href="#" class="btn-details no-underline"
              data-id="<?= esc($r['id_pinjam'] ?? '') ?>"
              data-nama="<?= esc($r['nama_siswa'] ?? '') ?>"
              data-kelas="<?= esc($r['kelas'] ?? '') ?>"
@@ -51,8 +51,8 @@
              data-tgl_selesai="<?= esc($r['tgl_selesai'] ?? '') ?>"
           >View details</a>
         </td>
-        <td class="px-6 py-4">
-          <button class="action-accept mr-2 btn-return" title="Selesai"
+        <td class="px-6 py-4 flex items-center gap-2">
+          <button class="action-accept btn-return" title="Selesai"
                   data-id="<?= esc($r['id_pinjam'] ?? '') ?>"
                   data-buku_id="<?= esc($r['id_buku'] ?? '') ?>"
           >
@@ -183,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function(){
     fetch('<?= base_url('backend/peminjaman/complete') ?>/' + pendingReturnId, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} })
       .then(r => r.json())
       .then(j => {
+        console.log('Complete response:', j); // DEBUG
         showToast(j.message || (j.success? 'Berhasil' : 'Gagal'), !!j.success);
         if (j.success) {
           // remove the row in-place
@@ -194,7 +195,10 @@ document.addEventListener('DOMContentLoaded', function(){
           }catch(e){}
         }
       })
-      .catch(()=> showToast('Terjadi kesalahan', false));
+      .catch((err)=> {
+        console.error('Fetch error:', err); // DEBUG
+        showToast('Terjadi kesalahan', false);
+      });
     document.getElementById('modalConfirmReturn').classList.add('hidden'); pendingReturnId = null; pendingReturnBtn = null;
   });
 

@@ -12,6 +12,49 @@ use Config\Services;
 
 class BukuController extends BaseController
 {
+    /**
+     * Endpoint AJAX untuk Infinite Scroll: /backend/buku/load?page=1&q=search
+     */
+    public function load()
+    {
+        $bukuModel = new BukuModel();
+        $q = trim($this->request->getGet('q') ?? '');
+        $perPage = 12;
+        $page = (int) $this->request->getGet('page') ?: 1;
+        if ($q !== '') {
+            $bukuModel->like('judul', $q);
+        }
+        $bukus = $bukuModel->orderBy('id_buku', 'DESC')->paginate($perPage, 'bukus', $page);
+        $pager = $bukuModel->pager;
+
+        // Attach kategori and images
+        $kategoriModel = new KategoriModel();
+        $kategoris = $kategoriModel->findAll();
+        $katMap = [];
+        foreach ($kategoris as $k) {
+            $katMap[$k['id_kategori']] = $k['jenis'];
+        }
+        $gambarModel = new GambarModel();
+        foreach ($bukus as &$b) {
+            $b['jenis'] = $katMap[$b['id_kategori']] ?? null;
+            $gs = $gambarModel->where('id_buku', $b['id_buku'])->orderBy('id_gambar', 'ASC')->findAll();
+            $urls = [];
+            foreach ($gs as $g) {
+                if (!empty($g['url'])) $urls[] = $g['url'];
+            }
+            $b['images'] = $urls;
+            $b['url'] = $urls[0] ?? null;
+        }
+
+        return $this->response->setJSON([
+            'bukus' => $bukus,
+            'pager' => [
+                'currentPage' => $pager->getCurrentPage('bukus'),
+                'totalPages' => $pager->getPageCount('bukus'),
+                'hasNext' => $pager->getCurrentPage('bukus') < $pager->getPageCount('bukus'),
+            ]
+        ]);
+    }
     public function index()
     {
         $bukuModel = new BukuModel();

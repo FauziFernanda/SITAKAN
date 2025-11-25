@@ -5,15 +5,15 @@ body {
 }
 
 /* Styles for Peminjaman list (table + action buttons) */
-.peminjaman-table { border-collapse: collapse; width: 100%; }
+.peminjaman-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
 .peminjaman-table thead th {
   background: rgba(255,255,255,0.06);
   color: #ffffff;
   font-weight: 700;
   letter-spacing: 0.6px;
 }
-.peminjaman-table th, .peminjaman-table td { border-bottom: 1px solid rgba(255,255,255,0.04); }
-.peminjaman-table tbody td { padding: 1.25rem 1.5rem; }
+.peminjaman-table th, .peminjaman-table td { border-bottom: 1px solid rgba(255,255,255,0.04); word-wrap: break-word; overflow-wrap: break-word; }
+.peminjaman-table tbody td { padding: 1.25rem 1.5rem; word-break: break-word; white-space: normal; }
 
 .action-accept {
   background: #16a34a; /* green */
@@ -470,7 +470,6 @@ body {
   background: transparent;
   border: none;
 }
-
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 body {
@@ -478,15 +477,15 @@ body {
 }
 
 /* Styles for Peminjaman list (table + action buttons) */
-.peminjaman-table { border-collapse: collapse; width: 100%; }
+.peminjaman-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
 .peminjaman-table thead th {
   background: rgba(255,255,255,0.06);
   color: #ffffff;
   font-weight: 700;
   letter-spacing: 0.6px;
 }
-.peminjaman-table th, .peminjaman-table td { border-bottom: 1px solid rgba(255,255,255,0.04); }
-.peminjaman-table tbody td { padding: 1.25rem 1.5rem; }
+.peminjaman-table th, .peminjaman-table td { border-bottom: 1px solid rgba(255,255,255,0.04); word-wrap: break-word; overflow-wrap: break-word; }
+.peminjaman-table tbody td { padding: 1.25rem 1.5rem; word-break: break-word; white-space: normal; }
 
 .action-accept {
   background: #16a34a; /* green */
@@ -948,7 +947,7 @@ body {
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   position: relative;
   width: 210px; /* slightly increased to match requested +4px */
-  margin: 0 auto;
+  margin: 0 auto 32px auto; /* tambah margin bawah antar baris card */
 }
 .book-card:hover { transform: translateY(-6px); box-shadow: 0 18px 30px rgba(16,24,40,0.09); }
 
@@ -995,12 +994,17 @@ body {
   padding: 8px 16px;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 14px;
   transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none !important;
+  white-space: nowrap;
 }
 .btn-details:hover {
   background: #1f5a27;          /* warna hijau gelap saat dihover */
   border-color: #1f5a27;        /* border ikut berubah */
   color: white;                 /* tetap putih */
+  text-decoration: none !important;
 }
 
 /* ensure full-bleed green background sits flush with page edges */

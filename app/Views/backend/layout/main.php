@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->renderSection('title') ?> | SITAKAN Backend</title>
     <link rel="icon" href="<?= base_url('assets/img/logo.png') ?>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
+    <script src="https://cdn.tailwindcss.com?v=<?= time() ?>"></script>
+    <link rel="stylesheet" href="<?= base_url('assets/css/style.css?v=' . time()) ?>">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

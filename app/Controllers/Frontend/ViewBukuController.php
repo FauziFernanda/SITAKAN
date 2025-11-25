@@ -38,40 +38,44 @@ class ViewBukuController extends BaseController
                 ->findAll();
         }
 
-        // Get images for each book and normalize URLs (add full URL)
-        foreach ($bukus as &$buku) {
-            $images = $this->gambarModel->where('id_buku', $buku['id_buku'])->findAll();
-            // Normalize image rows: add 'full_url' for direct use in views/JS
-            $normalized = [];
+        // Prefetch images for all books in a single query to avoid N+1 queries
+        $bukusById = [];
+        $ids = [];
+        foreach ($bukus as $b) {
+            $bukusById[$b['id_buku']] = $b;
+            $ids[] = $b['id_buku'];
+        }
+
+        $imagesGrouped = [];
+        if (! empty($ids)) {
+            $images = $this->gambarModel->whereIn('id_buku', $ids)->findAll();
             foreach ($images as $img) {
-                $url = isset($img['url']) ? $img['url'] : '';
-                // trim whitespace
-                $url = trim($url);
-                // if url already absolute (http/https) leave it, otherwise build full url
-                if (preg_match('#^https?://#i', $url)) {
-                    $img['full_url'] = $url;
-                } elseif ($url !== '') {
-                    // If the stored value already contains uploads/ prefix, use it as-is
-                    if (preg_match('#(^|/)uploads/#i', $url)) {
-                        $img['full_url'] = rtrim(base_url(), '/') . '/' . ltrim($url, '/');
+                $imgUrl = isset($img['url']) ? trim($img['url']) : '';
+                if (preg_match('#^https?://#i', $imgUrl)) {
+                    $img['full_url'] = $imgUrl;
+                } elseif ($imgUrl !== '') {
+                    if (preg_match('#(^|/)uploads/#i', $imgUrl)) {
+                        $img['full_url'] = rtrim(base_url(), '/') . '/' . ltrim($imgUrl, '/');
                     } else {
-                        // most records store only filename, so prefix with uploads/
-                        $img['full_url'] = rtrim(base_url(), '/') . '/uploads/' . ltrim($url, '/');
+                        $img['full_url'] = rtrim(base_url(), '/') . '/uploads/' . ltrim($imgUrl, '/');
                     }
                 } else {
                     $img['full_url'] = '';
                 }
-                $normalized[] = $img;
-            }
 
+                $imagesGrouped[$img['id_buku']][] = $img;
+            }
+        }
+
+        // Merge images back into the buku list
+        foreach ($bukus as &$buku) {
+            $normalized = $imagesGrouped[$buku['id_buku']] ?? [];
             $buku['gambar'] = $normalized;
-            // Set the cover image path (raw) and full URL to the first image if available
-            if (!empty($normalized) && !empty($normalized[0]['url'])) {
+            if (! empty($normalized) && ! empty($normalized[0]['url'])) {
                 $buku['cover_url'] = $normalized[0]['url'];
                 $buku['cover_url_full'] = $normalized[0]['full_url'];
             }
-            // Ensure category key is available as 'kategori' for frontend JS
-            if (isset($buku['kategori_nama']) && !isset($buku['kategori'])) {
+            if (isset($buku['kategori_nama']) && ! isset($buku['kategori'])) {
                 $buku['kategori'] = $buku['kategori_nama'];
             }
         }

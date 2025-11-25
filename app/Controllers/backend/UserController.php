@@ -10,9 +10,16 @@ class UserController extends BaseController
     public function index()
     {
         $userModel = new UserModel();
-        $users = $userModel->orderBy('id_user', 'DESC')->findAll();
-
-        return view('backend/register', ['users' => $users]);
+        $perPage = 15;
+        $page = (int) $this->request->getGet('page') ?: 1;
+        $users = $userModel->orderBy('id_user', 'DESC')->paginate($perPage, 'users', $page);
+        $pager = $userModel->pager;
+        return view('backend/register', [
+            'users' => $users,
+            'pager' => $pager,
+            'perPage' => $perPage,
+            'page' => $page
+        ]);
     }
 
     public function create()

@@ -55,11 +55,10 @@ class RiwayatController extends BaseController
     public function index()
     {
         $riwayatModel = new RiwayatModel();
-        
-        // Get all riwayat data
-        $riwayats = $riwayatModel
-            ->orderBy('tgl_selesai', 'DESC')
-            ->findAll();
+        $perPage = 15;
+        $page = (int) $this->request->getGet('page') ?: 1;
+        $riwayats = $riwayatModel->orderBy('tgl_selesai', 'DESC')->paginate($perPage, 'riwayats', $page);
+        $pager = $riwayatModel->pager;
 
         // Group by tgl_selesai
         $groupedRiwayats = [];
@@ -76,18 +75,13 @@ class RiwayatController extends BaseController
             }
             $groupedRiwayats[$dateKey]['items'][] = $riwayat;
         }
-        
-        // Sort by date descending
         krsort($groupedRiwayats);
 
-        // Debug data sebelum dikirim ke view
-        foreach ($riwayats as $r) {
-            log_message('debug', 'Data riwayat: ' . json_encode($r));
-        }
-
-        // Return the grouped data to the view
         return view('backend/riwayat_list', [
-            'groupedRiwayats' => $groupedRiwayats
+            'groupedRiwayats' => $groupedRiwayats,
+            'pager' => $pager,
+            'perPage' => $perPage,
+            'page' => $page
         ]);
     }
 

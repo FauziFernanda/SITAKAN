@@ -11,13 +11,15 @@ class PinjamanController extends BaseController
     public function index()
     {
         $pinjamModel = new PinjamModel();
-        // Order by insertion (newest first). We don't have automatic timestamps, so use primary key id_pinjam DESC
+        $perPage = 15;
+        $page = (int) $this->request->getGet('page') ?: 1;
         $peminjamans = $pinjamModel
             ->select('pinjams.*, pinjams.nama_siswa as nama_siswa, bukus.judul as judul_buku')
             ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
             ->where('(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = "" OR pinjams.tgl_selesai = "0000-00-00")', null, false)
             ->orderBy('pinjams.id_pinjam', 'DESC')
-            ->findAll();
+            ->paginate($perPage, 'peminjamans', $page);
+        $pager = $pinjamModel->pager;
 
         // mark overdue entries (denda) so frontend can style them
         $today = new \DateTime('today');
@@ -39,7 +41,12 @@ class PinjamanController extends BaseController
             $row['is_denda'] = $isOverdue ? 1 : 0;
         }
 
-        return view('backend/peminjaman_list', ['peminjamans' => $peminjamans]);
+        return view('backend/peminjaman_list', [
+            'peminjamans' => $peminjamans,
+            'pager' => $pager,
+            'perPage' => $perPage,
+            'page' => $page
+        ]);
     }
 
     public function create()
@@ -216,7 +223,7 @@ class PinjamanController extends BaseController
     }
 
     /**
-     * Complete a peminjaman: move to riwayat table, restore stock, and delete from pinjams.
+     * Complete a peminjaman: just mark as completed by setting tgl_selesai
      */
     public function complete($id = null)
     {
@@ -230,7 +237,6 @@ class PinjamanController extends BaseController
         }
 
         $pinjamModel = new PinjamModel();
-        $riwayatModel = new \App\Models\RiwayatModel();
         $bukuModel = new BukuModel();
         $db = \Config\Database::connect();
         $db->transStart();
@@ -242,17 +248,21 @@ class PinjamanController extends BaseController
                 return $this->response->setJSON(['success' => false, 'message' => 'Data tidak ditemukan']);
             }
 
-            // Set tgl_selesai to today
             $today = date('Y-m-d');
-
-            // Fetch book info to get title and stok
+            
+            // Get book info for riwayat
             $buku = $bukuModel->find($pinjam['id_buku']);
-            $judulBuku = $buku['judul'] ?? null;
+            if ($buku) {
+                $stok = (int)$buku['stok'];
+                $bukuModel->update($buku['id_buku'], ['stok' => $stok + 1]);
+            }
 
-            // Prepare data to insert into riwayat table with only required columns
+            // Insert ke riwayat
+            $riwayatModel = new \App\Models\RiwayatModel();
             $riwayatData = [
+                'id_pinjam' => $id,
                 'nama_siswa' => $pinjam['nama_siswa'],
-                'judul' => $judulBuku,
+                'judul' => $buku['judul'] ?? null,
                 'kelas' => $pinjam['kelas'],
                 'tgl_pinjam' => $pinjam['tgl_pinjam'],
                 'tgl_kembali' => $pinjam['tgl_kembali'],
@@ -260,18 +270,10 @@ class PinjamanController extends BaseController
                 'status' => 'selesai',
                 'keterangan' => 'Good'
             ];
-
-            // Insert into riwayat
             $riwayatModel->insert($riwayatData);
 
-            // Restore stock (always restore when completing)
-            if ($buku) {
-                $stok = (int)$buku['stok'];
-                $bukuModel->update($buku['id_buku'], ['stok' => $stok + 1]);
-            }
-
-            // Delete from pinjams
-            $pinjamModel->delete($id);
+            // Mark as completed - just set tgl_selesai
+            $pinjamModel->update($id, ['tgl_selesai' => $today]);
 
             $db->transComplete();
             if ($db->transStatus() === false) {
@@ -281,7 +283,6 @@ class PinjamanController extends BaseController
             return $this->response->setJSON(['success' => true, 'message' => 'Peminjaman berhasil diselesaikan']);
         } catch (\Exception $e) {
             $db->transRollback();
-            log_message('error', 'Complete peminjaman error: ' . $e->getMessage());
             return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan']);
         }
     }

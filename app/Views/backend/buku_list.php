@@ -34,7 +34,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
     <?php if (!empty($bukus)): ?>
       <?php foreach ($bukus as $buku): ?>
-        <div class="bg-[#2A2A2A] rounded-lg shadow-md overflow-hidden relative border border-gray-700 hover:shadow-lg hover:scale-[1.02] transition-transform duration-200">
+        <div class="bg-[#2A2A2A] rounded-lg shadow-md overflow-hidden relative border border-gray-700 hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 flex flex-col h-full">
           <?php
             $images = $buku['images'] ?? [];
             $jsonImages = htmlspecialchars(json_encode($images), ENT_QUOTES, 'UTF-8');
@@ -42,31 +42,33 @@
           ?>
           <div class="relative card-media" data-images="<?= $jsonImages ?>" data-current-index="0">
             <?php if ($firstImg): ?>
-              <img src="<?= base_url('uploads/' . $firstImg) ?>" alt="<?= esc($buku['judul']) ?>" class="w-full h-64 object-cover card-img">
+              <img src="<?= base_url('uploads/' . $firstImg) ?>" alt="<?= esc($buku['judul']) ?>" class="w-full h-64 object-cover card-img" loading="lazy" decoding="async" height="256">
             <?php else: ?>
-              <img src="<?= base_url('assets/img/default-book.png') ?>" alt="No Image" class="w-full h-64 object-cover opacity-80 card-img">
+              <img src="<?= base_url('assets/img/default-book.png') ?>" alt="No Image" class="w-full h-64 object-cover opacity-80 card-img" loading="lazy" decoding="async" height="256">
             <?php endif; ?>
 
             <button class="absolute top-2 right-2 bg-white/80 p-2 rounded-full hover:bg-red-600 transition flex items-center justify-center btn-delete" title="Hapus" data-id="<?= esc($buku['id_buku']) ?>" data-judul="<?= esc($buku['judul']) ?>">
-              <img src="<?= base_url('assets/icons/sampah.png') ?>" alt="hapus" class="w-4 h-4">
+              <img src="<?= base_url('assets/icons/sampah.png') ?>" alt="hapus" class="w-4 h-4" loading="lazy" decoding="async">
             </button>
 
             <!-- nav arrows (slightly above center) - enlarged for easier tapping -->
             <button class="absolute left-3 arrow-left btn-arrow rounded-full" style="top:42%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; background:#ffffff; border:0;" title="Sebelumnya">
-              <img src="<?= base_url('assets/icons/panah_kiri.png') ?>" alt="kiri" class="w-9 h-9" style="display:block;">
+              <img src="<?= base_url('assets/icons/panah_kiri.png') ?>" alt="kiri" class="w-9 h-9" style="display:block;" loading="lazy" decoding="async">
             </button>
             <button class="absolute right-3 arrow-right btn-arrow rounded-full" style="top:42%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; background:#ffffff; border:0;" title="Selanjutnya">
-              <img src="<?= base_url('assets/icons/panah_kanan.png') ?>" alt="kanan" class="w-9 h-9" style="display:block;">
+              <img src="<?= base_url('assets/icons/panah_kanan.png') ?>" alt="kanan" class="w-9 h-9" style="display:block;" loading="lazy" decoding="async">
             </button>
           </div>
 
-          <div class="p-5">
-            <h3 class="font-semibold text-lg text-white mb-1"><?= esc($buku['judul']) ?></h3>
-            <p class="text-sm text-gray-400 mb-2"><?= esc($buku['penulis']) ?></p>
-            <p class="text-sm text-gray-400 italic mb-3"><?= esc($buku['jenis'] ?? 'Tanpa Kategori') ?></p>
+          <div class="p-5 flex flex-col h-full">
+            <div>
+              <h3 class="font-semibold text-lg text-white mb-1"><?= esc($buku['judul']) ?></h3>
+              <p class="text-sm text-gray-400 mb-2"><?= esc($buku['penulis']) ?></p>
+              <p class="text-sm text-gray-400 italic mb-3"><?= esc($buku['jenis'] ?? 'Tanpa Kategori') ?></p>
+            </div>
 
-            <div class="flex justify-between mt-3">
-              <button class="btn-edit bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded transition"
+            <div class="flex gap-3 mt-auto pt-4">
+              <button class="btn-edit bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition flex-1"
                 data-id="<?= esc($buku['id_buku']) ?>"
                 data-judul="<?= esc($buku['judul']) ?>"
                 data-penulis="<?= esc($buku['penulis']) ?>"
@@ -76,7 +78,7 @@
                 data-id_kategori="<?= esc($buku['id_kategori']) ?>"
                 data-images='<?= $jsonImages ?>'
               >Edit</button>
-              <button class="btn-pinjam bg-green-700 hover:bg-green-800 text-white px-4 py-1 rounded transition" data-id="<?= esc($buku['id_buku']) ?>" data-judul="<?= esc($buku['judul']) ?>" data-stok="<?= esc($buku['stok']) ?>">Pinjam</button>
+              <button class="btn-pinjam bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded transition flex-1" data-id="<?= esc($buku['id_buku']) ?>" data-judul="<?= esc($buku['judul']) ?>" data-stok="<?= esc($buku['stok']) ?>">Pinjam</button>
             </div>
           </div>
         </div>
@@ -453,6 +455,12 @@
           submitBtn.disabled = true; submitBtn.textContent = 'Updating...';
 
           const fd = new FormData(form);
+          
+          // Explicitly append CSRF token to ensure it's included
+          const csrfName = '<?= csrf_token() ?>';
+          const csrfHash = '<?= csrf_hash() ?>';
+          fd.set(csrfName, csrfHash);
+          
           // append files if selected
           if(imagesInput && imagesInput.files && imagesInput.files.length > 0){
             for(const f of Array.from(imagesInput.files)) fd.append('images[]', f, f.name);
@@ -633,6 +641,12 @@
           e.preventDefault();
           const url = deleteForm.action;
           const fd = new FormData(deleteForm);
+          
+          // Explicitly append CSRF token to ensure it's included
+          const csrfName = '<?= csrf_token() ?>';
+          const csrfHash = '<?= csrf_hash() ?>';
+          fd.set(csrfName, csrfHash);
+          
           fetch(url, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(r => r.json())
             .then(data => {
@@ -776,6 +790,12 @@
 
           // build FormData and append files from dtImages so files are actually sent
           const fd = new FormData(form);
+          
+          // Explicitly append CSRF token to ensure it's included
+          const csrfName = '<?= csrf_token() ?>';
+          const csrfHash = '<?= csrf_hash() ?>';
+          fd.set(csrfName, csrfHash);
+          
           if (typeof dtImages !== 'undefined' && dtImages && dtImages.files && dtImages.files.length > 0) {
             for (const f of Array.from(dtImages.files)) {
               fd.append('images[]', f, f.name);
