@@ -89,16 +89,35 @@ class DendaController extends BaseController
 
     public function pdf()
     {
-        // Get denda data using the same logic
+        // Get denda data; if date-range filters are provided via GET, apply them.
+        $tgl_mulai = trim((string) $this->request->getGet('tgl_mulai'));
+        $tgl_selesai = trim((string) $this->request->getGet('tgl_selesai'));
+        $nama = trim((string) $this->request->getGet('nama'));
+        $judul = trim((string) $this->request->getGet('judul'));
+
         $pinjamModel = new PinjamModel();
-        
-        $rows = $pinjamModel
+
+        $query = $pinjamModel
             ->select('pinjams.*, bukus.judul as judul_buku')
             ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
             ->where("(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = '' OR pinjams.tgl_selesai = '0000-00-00')", null, false)
-            ->where('pinjams.tgl_kembali <', date('Y-m-d'))
-            ->orderBy('pinjams.tgl_kembali', 'ASC')
-            ->findAll();
+            ->where('pinjams.tgl_kembali <', date('Y-m-d'));
+
+        // Apply optional date-range filter (only if both start and end provided)
+        if ($tgl_mulai !== '' && $tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_kembali >=', $tgl_mulai)
+                           ->where('pinjams.tgl_kembali <=', $tgl_selesai);
+        }
+
+        if ($nama !== '') {
+            $query = $query->like('pinjams.nama_siswa', $nama);
+        }
+
+        if ($judul !== '') {
+            $query = $query->like('bukus.judul', $judul);
+        }
+
+        $rows = $query->orderBy('pinjams.tgl_kembali', 'ASC')->findAll();
 
         // compute days late and per-row fine, and total
         $today = new \DateTime('today');

@@ -931,7 +931,8 @@ body {
   display: grid;
   grid-template-columns: repeat(1, minmax(0,1fr));
   gap: 2rem;
-  justify-items: center; /* center each card and prevent stretching */
+  justify-items: center; /* center each card horizontally */
+  align-items: stretch; /* make cards stretch to equal height */
 }
 @media (min-width: 640px) { .books-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (min-width: 768px) { .books-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
@@ -948,6 +949,7 @@ body {
   position: relative;
   width: 210px; /* slightly increased to match requested +4px */
   margin: 16px auto 32px auto; /* shift down 16px, 32px margin bottom */
+  min-height: 360px; /* ensure consistent card height so footer can stick to bottom */
 }
 .book-card:hover { transform: translateY(-6px); box-shadow: 0 18px 30px rgba(16,24,40,0.09); }
 
@@ -1027,13 +1029,12 @@ body {
   box-shadow: 0 0 8px rgba(37, 98, 45, 0.4);
 }
 
-.book-title { font-size: 15px; line-height: 1.35; font-weight: 700; color: #0f172a; text-align:center; margin: 12px 0 10px; }
-.book-meta { width: 100%; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.book-stock { color:#6b7280; font-size: 14px; }
-.btn-detailss { background:#25622D; color:#fff; padding:10px 16px; border-radius:12px; text-decoration:none; display:inline-block; font-weight:700; }
+.book-title { font-size: 15px; line-height: 1.35; font-weight: 700; color: #0f172a; text-align:center; margin: 12px 0 10px; padding: 0 8px; }
+.book-meta { width: 100%; display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 0 12px; margin-top: auto; flex-wrap: nowrap; }
+.book-stock { color:#6b7280; font-size: 14px; white-space: nowrap; margin-right: 8px; }
+.btn-detailss { background:#25622D; color:#fff; padding:10px 16px; border-radius:12px; text-decoration:none; display:inline-block; font-weight:700; flex-shrink: 0; margin-left: 8px; }
 .btn-detailss:hover {
   background:#1f5a27; 
-
 }
 
 

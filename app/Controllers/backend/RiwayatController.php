@@ -12,11 +12,29 @@ class RiwayatController extends BaseController
     public function pdf()
     {
         $riwayatModel = new RiwayatModel();
-        
-        // Get all riwayat data
-        $riwayats = $riwayatModel
-            ->orderBy('tgl_selesai', 'DESC')
-            ->findAll();
+
+        // Respect optional date-range filters passed as GET params. If both
+        // start and end are provided we filter by tgl_pinjam between them.
+        $tgl_pinjam = trim((string) $this->request->getGet('tgl_pinjam'));
+        $tgl_kembali = trim((string) $this->request->getGet('tgl_kembali'));
+        $judul = trim((string) $this->request->getGet('judul'));
+        $nama = trim((string) $this->request->getGet('nama'));
+
+        $query = $riwayatModel;
+        if ($judul !== '') {
+            $query = $query->like('judul', $judul);
+        }
+        if ($nama !== '') {
+            $query = $query->like('nama_siswa', $nama);
+        }
+
+        if ($tgl_pinjam !== '' && $tgl_kembali !== '') {
+            $query = $query->where('tgl_pinjam >=', $tgl_pinjam)
+                           ->where('tgl_pinjam <=', $tgl_kembali);
+        }
+
+        // Fetch rows (if no filters provided this returns all)
+        $riwayats = $query->orderBy('tgl_selesai', 'DESC')->findAll();
 
         // Format today's date in Indonesian
         $timestamp = time();

@@ -7,9 +7,10 @@
   <p class="text-gray-400 mb-6">Kelola data denda peminjaman</p>
 </div>
 
+<?php $qs = http_build_query(service('request')->getGet()); ?>
 <div class="flex items-center justify-between mb-4">
   <h3 class="text-gray-300 mb-3 tracking-wide">List Denda Peminjaman</h3>
-  <a href="<?= base_url('backend/denda/pdf') ?>" class="px-4 py-2 bg-[#0f7a63] text-white rounded-md font-semibold flex items-center gap-2">
+  <a href="<?= base_url('backend/denda/pdf') . ($qs ? ('?' . $qs) : '') ?>" class="px-4 py-2 bg-[#0f7a63] text-white rounded-md font-semibold flex items-center gap-2">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
     </svg>
