@@ -16,6 +16,92 @@
       Export PDF
     </a>
   </div>
+  <!-- Search form (moved above list header) -->
+  <?php $s = $search ?? ['judul'=>'','nama'=>'','tgl_pinjam'=>'','tgl_kembali'=>''];
+        // parse existing dates into components (expects YYYY-MM-DD)
+        $pinjam_day = $pinjam_month = $pinjam_year = '';
+        $kembali_day = $kembali_month = $kembali_year = '';
+        if (!empty($s['tgl_pinjam'])) {
+            $d = explode('-', $s['tgl_pinjam']);
+            if (count($d)===3) { $pinjam_year=$d[0]; $pinjam_month=(int)$d[1]; $pinjam_day=(int)$d[2]; }
+        }
+        if (!empty($s['tgl_kembali'])) {
+            $d = explode('-', $s['tgl_kembali']);
+            if (count($d)===3) { $kembali_year=$d[0]; $kembali_month=(int)$d[1]; $kembali_day=(int)$d[2]; }
+        }
+        $months = [1=>'Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  ?>
+
+  <form id="searchForm" method="get" action="<?= base_url('backend/riwayat') ?>" class="mb-6">
+    <div class="flex gap-3 flex-wrap items-end">
+      <div class="flex-1">
+        <label class="text-sm text-gray-400 block mb-1">Cari (Judul / Nama)</label>
+        <div class="flex gap-3">
+          <input type="text" name="judul" placeholder="Judul buku" value="<?= esc($s['judul']) ?>" class="w-1/2 px-3 py-2 rounded bg-gray-800 text-white" />
+          <input type="text" name="nama" placeholder="Nama siswa" value="<?= esc($s['nama']) ?>" class="w-1/2 px-3 py-2 rounded bg-gray-800 text-white" />
+        </div>
+      </div>
+      <div class="flex-none">
+        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Cari</button>
+      </div>
+    </div>
+
+    <div class="mt-3 grid grid-cols-2 gap-3">
+      <div>
+        <label class="text-sm text-gray-400 block mb-1">Start Date</label>
+        <div class="flex gap-2">
+          <select id="pinjam_day" class="px-3 py-2 rounded bg-gray-800 text-white" aria-label="day">
+            <option value="">Hari</option>
+            <?php for ($i=1;$i<=31;$i++): ?>
+              <option value="<?= $i ?>" <?= ($pinjam_day===$i)?'selected':'' ?> ><?= $i ?></option>
+            <?php endfor; ?>
+          </select>
+          <select id="pinjam_month" class="px-3 py-2 rounded bg-gray-800 text-white" aria-label="month">
+            <option value="">Bulan</option>
+            <?php foreach($months as $num => $name): ?>
+              <option value="<?= $num ?>" <?= ($pinjam_month===$num)?'selected':'' ?> ><?= $name ?></option>
+            <?php endforeach; ?>
+          </select>
+          <select id="pinjam_year" class="px-3 py-2 rounded bg-gray-800 text-white" aria-label="year">
+            <option value="">Tahun</option>
+            <?php $curY = date('Y'); for($y=$curY; $y>=$curY-20; $y--): ?>
+              <option value="<?= $y ?>" <?= ($pinjam_year===$y)?'selected':'' ?> ><?= $y ?></option>
+            <?php endfor; ?>
+          </select>
+        </div>
+        <div id="dateError" class="mt-2 text-sm text-red-400 hidden">rate tanggal wajib di isi keduanya</div>
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-400 block mb-1">End Date</label>
+        <div class="flex gap-2">
+          <select id="kembali_day" class="px-3 py-2 rounded bg-gray-800 text-white" aria-label="day">
+            <option value="">Hari</option>
+            <?php for ($i=1;$i<=31;$i++): ?>
+              <option value="<?= $i ?>" <?= ($kembali_day===$i)?'selected':'' ?> ><?= $i ?></option>
+            <?php endfor; ?>
+          </select>
+          <select id="kembali_month" class="px-3 py-2 rounded bg-gray-800 text-white" aria-label="month">
+            <option value="">Bulan</option>
+            <?php foreach($months as $num => $name): ?>
+              <option value="<?= $num ?>" <?= ($kembali_month===$num)?'selected':'' ?> ><?= $name ?></option>
+            <?php endforeach; ?>
+          </select>
+          <select id="kembali_year" class="px-3 py-2 rounded bg-gray-800 text-white" aria-label="year">
+            <option value="">Tahun</option>
+            <?php $curY = date('Y'); for($y=$curY; $y>=$curY-20; $y--): ?>
+              <option value="<?= $y ?>" <?= ($kembali_year===$y)?'selected':'' ?> ><?= $y ?></option>
+            <?php endfor; ?>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- hidden inputs to send composed YYYY-MM-DD to controller -->
+    <input type="hidden" id="tgl_pinjam" name="tgl_pinjam" value="<?= esc($s['tgl_pinjam']) ?>" />
+    <input type="hidden" id="tgl_kembali" name="tgl_kembali" value="<?= esc($s['tgl_kembali']) ?>" />
+  </form>
 
   <div id="notification" class="fixed top-4 right-4 text-white px-6 py-3 rounded-lg transform transition-all duration-300 translate-x-full z-50 min-w-[300px] text-base font-medium
       <?php if (session()->getFlashdata('success')): ?>
@@ -169,6 +255,70 @@ document.addEventListener('DOMContentLoaded', function() {
         
         window.location.href = '<?= base_url('backend/riwayat/delete') ?>/' + activeId;
     });
+
+    // --- compose date selects into hidden inputs for controller ---
+    function pad(n){ return (n<10? '0'+n : n); }
+
+    const pinjamDay = document.getElementById('pinjam_day');
+    const pinjamMonth = document.getElementById('pinjam_month');
+    const pinjamYear = document.getElementById('pinjam_year');
+    const kembaliDay = document.getElementById('kembali_day');
+    const kembaliMonth = document.getElementById('kembali_month');
+    const kembaliYear = document.getElementById('kembali_year');
+    const hiddenPinjam = document.getElementById('tgl_pinjam');
+    const hiddenKembali = document.getElementById('tgl_kembali');
+
+    function composeDate(dayEl, monEl, yrEl, targetEl) {
+      const d = dayEl.value; const m = monEl.value; const y = yrEl.value;
+      if (d && m && y) {
+        targetEl.value = y + '-' + (m.length===1? '0'+m : m) + '-' + pad(parseInt(d,10));
+      } else {
+        targetEl.value = '';
+      }
+    }
+
+    // initialize: if hidden inputs have values, pre-select selects
+    function initSelectsFromHidden(hiddenEl, dayEl, monEl, yrEl){
+      if (!hiddenEl || !hiddenEl.value) return;
+      const parts = hiddenEl.value.split('-');
+      if (parts.length===3){
+        yrEl.value = parts[0];
+        monEl.value = parseInt(parts[1],10);
+        dayEl.value = parseInt(parts[2],10);
+      }
+    }
+
+    initSelectsFromHidden(hiddenPinjam, pinjamDay, pinjamMonth, pinjamYear);
+    initSelectsFromHidden(hiddenKembali, kembaliDay, kembaliMonth, kembaliYear);
+
+    [pinjamDay, pinjamMonth, pinjamYear].forEach(el => el && el.addEventListener('change', ()=> composeDate(pinjamDay, pinjamMonth, pinjamYear, hiddenPinjam)));
+    [kembaliDay, kembaliMonth, kembaliYear].forEach(el => el && el.addEventListener('change', ()=> composeDate(kembaliDay, kembaliMonth, kembaliYear, hiddenKembali)));
+
+    // Client-side validation: require both Start and End if either is filled
+    const searchForm = document.getElementById('searchForm');
+    const dateError = document.getElementById('dateError');
+
+    if (searchForm) {
+      searchForm.addEventListener('submit', function(e){
+        // ensure composed hidden inputs are up-to-date
+        composeDate(pinjamDay, pinjamMonth, pinjamYear, hiddenPinjam);
+        composeDate(kembaliDay, kembaliMonth, kembaliYear, hiddenKembali);
+
+        const start = hiddenPinjam.value.trim();
+        const end = hiddenKembali.value.trim();
+        if ((start && !end) || (!start && end)) {
+          e.preventDefault();
+          dateError.classList.remove('hidden');
+          // scroll to error for visibility
+          dateError.scrollIntoView({behavior: 'smooth', block: 'center'});
+          return false;
+        }
+        // no validation error -> ensure error hidden
+        dateError.classList.add('hidden');
+        return true;
+      });
+    }
+
 });
 </script>
 <?= $this->endSection() ?>

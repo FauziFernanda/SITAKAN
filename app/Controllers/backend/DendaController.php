@@ -14,26 +14,55 @@ class DendaController extends BaseController
      */
     public function index()
     {
-        $pinjamModel = new PinjamModel();
+        $tgl_mulai = trim((string) $this->request->getGet('tgl_mulai'));
+        $tgl_selesai = trim((string) $this->request->getGet('tgl_selesai'));
+        $nama = trim((string) $this->request->getGet('nama'));
+        $judul = trim((string) $this->request->getGet('judul'));
+        
+        if ((($tgl_mulai === '') && ($tgl_selesai !== '')) || (($tgl_mulai !== '') && ($tgl_selesai === ''))) {
+            session()->setFlashdata('error', 'rate tanggal wajib di isi keduanya');
+            $qs = http_build_query($this->request->getGet());
+            return redirect()->to(base_url('backend/denda') . ($qs ? ('?' . $qs) : ''));
+        }
 
-        return $this->renderDendaList();
+        return $this->renderDendaList($tgl_mulai, $tgl_selesai, $nama, $judul);
     }
 
-    private function renderDendaList()
+    private function renderDendaList($tgl_mulai = '', $tgl_selesai = '', $nama = '', $judul = '')
     {
         $pinjamModel = new PinjamModel();
 
-        // select only peminjaman that are not returned and past their due date
-        $rows = $pinjamModel
+        $query = $pinjamModel
             ->select('pinjams.*, bukus.judul as judul_buku')
             ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
             ->where("(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = '' OR pinjams.tgl_selesai = '0000-00-00')", null, false)
-            ->where('pinjams.tgl_kembali <', date('Y-m-d'))
-            ->orderBy('pinjams.tgl_kembali', 'ASC')
-            ->findAll();
+            ->where('pinjams.tgl_kembali <', date('Y-m-d'));
+        
+        if ($tgl_mulai !== '' && $tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_kembali >=', $tgl_mulai)
+                           ->where('pinjams.tgl_kembali <=', $tgl_selesai);
+        } elseif ($tgl_mulai !== '') {
+            $query = $query->where('pinjams.tgl_kembali >=', $tgl_mulai);
+        } elseif ($tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_kembali <=', $tgl_selesai);
+        }
+        
+        if ($nama !== '') {
+            $query = $query->like('pinjams.nama_siswa', $nama);
+        }
+        
+        if ($judul !== '') {
+            $query = $query->like('bukus.judul', $judul);
+        }
+        
+        $rows = $query->orderBy('pinjams.tgl_kembali', 'ASC')->findAll();
 
-        // compute days late
+        // compute days late and per-row fine, also accumulate total
         $today = new \DateTime('today');
+        // per-day fine (Rupiah). If you later want to make this configurable,
+        // move it to a config file or database setting.
+        $perhari = 500;
+        $total = 0;
         foreach ($rows as &$r) {
             $r['telat_hari'] = 0;
             if (!empty($r['tgl_kembali'])) {
@@ -46,9 +75,16 @@ class DendaController extends BaseController
                     $r['telat_hari'] = 0;
                 }
             }
+            $r['denda'] = ($r['telat_hari'] ?? 0) * $perhari;
+            $total += $r['denda'];
         }
 
-        return view('backend/denda_list', ['dendas' => $rows]);
+        return view('backend/denda_list', [
+            'dendas' => $rows, 
+            'total_denda' => $total, 
+            'denda_perhari' => $perhari,
+            'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul]
+        ]);
     }
 
     public function pdf()
@@ -64,8 +100,10 @@ class DendaController extends BaseController
             ->orderBy('pinjams.tgl_kembali', 'ASC')
             ->findAll();
 
-        // compute days late and denda
+        // compute days late and per-row fine, and total
         $today = new \DateTime('today');
+        $perhari = 500;
+        $total = 0;
         foreach ($rows as &$r) {
             $r['telat_hari'] = 0;
             if (!empty($r['tgl_kembali'])) {
@@ -78,6 +116,8 @@ class DendaController extends BaseController
                     $r['telat_hari'] = 0;
                 }
             }
+            $r['denda'] = ($r['telat_hari'] ?? 0) * $perhari;
+            $total += $r['denda'];
         }
 
         // Format today's date in Indonesian
@@ -92,10 +132,12 @@ class DendaController extends BaseController
         
         $tanggal = "$day, $date $month $year";
 
-        // Load the PDF view
+        // Load the PDF view (include totals)
         $html = view('backend/denda_pdf', [
             'dendas' => $rows,
-            'tanggal' => $tanggal
+            'tanggal' => $tanggal,
+            'total_denda' => $total,
+            'denda_perhari' => $perhari,
         ]);
 
         // Generate PDF

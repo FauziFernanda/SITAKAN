@@ -57,7 +57,43 @@ class RiwayatController extends BaseController
         $riwayatModel = new RiwayatModel();
         $perPage = 15;
         $page = (int) $this->request->getGet('page') ?: 1;
-        $riwayats = $riwayatModel->orderBy('tgl_selesai', 'DESC')->paginate($perPage, 'riwayats', $page);
+        // Search filters
+        $judul = trim((string) $this->request->getGet('judul'));
+        $nama = trim((string) $this->request->getGet('nama'));
+        $tgl_pinjam = trim((string) $this->request->getGet('tgl_pinjam'));
+        $tgl_kembali = trim((string) $this->request->getGet('tgl_kembali'));
+
+        // Build query with optional filters
+        $query = $riwayatModel;
+
+        // If only one of the date range inputs is provided, reject and ask user to fill both.
+        if ((($tgl_pinjam === '') && ($tgl_kembali !== '')) || (($tgl_pinjam !== '') && ($tgl_kembali === ''))) {
+            session()->setFlashdata('error', 'rate tanggal wajib di isi keduanya');
+            // Preserve GET parameters when redirecting back so selects remain filled
+            $qs = http_build_query($this->request->getGet());
+            return redirect()->to(base_url('backend/riwayat') . ($qs ? ('?' . $qs) : ''));
+        }
+        if ($judul !== '') {
+            $query = $query->like('judul', $judul);
+        }
+        if ($nama !== '') {
+            $query = $query->like('nama_siswa', $nama);
+        }
+        // Interpret the date inputs as a Start (tgl_pinjam) and End (tgl_kembali)
+        // and filter records by tgl_pinjam within the provided range (inclusive).
+        if ($tgl_pinjam !== '' && $tgl_kembali !== '') {
+            // both provided: tgl_pinjam between start and end
+            $query = $query->where('tgl_pinjam >=', $tgl_pinjam)
+                           ->where('tgl_pinjam <=', $tgl_kembali);
+        } elseif ($tgl_pinjam !== '') {
+            // only start provided: tgl_pinjam on/after start
+            $query = $query->where('tgl_pinjam >=', $tgl_pinjam);
+        } elseif ($tgl_kembali !== '') {
+            // only end provided: tgl_pinjam on/before end
+            $query = $query->where('tgl_pinjam <=', $tgl_kembali);
+        }
+
+        $riwayats = $query->orderBy('tgl_selesai', 'DESC')->paginate($perPage, 'riwayats', $page);
         $pager = $riwayatModel->pager;
 
         // Group by tgl_selesai
@@ -81,7 +117,14 @@ class RiwayatController extends BaseController
             'groupedRiwayats' => $groupedRiwayats,
             'pager' => $pager,
             'perPage' => $perPage,
-            'page' => $page
+            'page' => $page,
+            // echo back search values so view can keep them
+            'search' => [
+                'judul' => $judul,
+                'nama' => $nama,
+                'tgl_pinjam' => $tgl_pinjam,
+                'tgl_kembali' => $tgl_kembali,
+            ],
         ]);
     }
 

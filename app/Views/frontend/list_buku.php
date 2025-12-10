@@ -64,48 +64,48 @@ Daftar Buku
 </section>
 
 <!-- Book Detail Modal -->
-<div id="bookDetailModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden overflow-y-auto">
-    <div class="modal-content bg-white w-11/12 md:w-3/4 lg:w-2/3 mx-auto my-8 rounded-xl shadow-xl p-6 relative">
+<div id="bookDetailModal" class="modal hidden">
+    <div class="modal-content">
         <button onclick="closeBookDetail()" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
         
-        <div class="flex flex-col md:flex-row gap-8">
-            <div class="w-full md:w-1/2">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="w-full md:w-5/12 flex-shrink-0">
                 <!-- Main image display -->
-                <div class="main-image-container mb-4 rounded-lg overflow-hidden shadow-lg">
+                <div class="main-image-container mb-3 rounded-lg overflow-hidden shadow-lg">
                     <img id="mainBookImage" src="" alt="Book Cover" class="w-full h-auto">
                 </div>
                 <!-- Thumbnail images -->
-                <div id="bookThumbnails" class="grid grid-cols-1 gap-2">
+                <div id="bookThumbnails">
                     <!-- Thumbnails will be inserted here by JavaScript -->
                 </div>
             </div>
             
-            <div class="w-full md:w-1/2 mt-7">
-                <h2 id="bookTitle" class="text-2xl font-bold text-gray-800 mb-4"></h2>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-3 gap-4">
+            <div class="w-full md:w-1/2 md:ml-4">
+                <h2 id="bookTitle" class="text-lg font-bold text-gray-800 mb-3"></h2>
+                <div class="space-y-2 text-sm">
+                    <div class="grid grid-cols-3 gap-2">
                         <div class="font-semibold text-gray-600">Kategori</div>
-                        <div id="bookCategory" class="col-span-2"></div>
+                        <div id="bookCategory" class="col-span-2 text-gray-800"></div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-3 gap-2">
                         <div class="font-semibold text-gray-600">Penulis</div>
-                        <div id="bookAuthor" class="col-span-2"></div>
+                        <div id="bookAuthor" class="col-span-2 text-gray-800"></div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-3 gap-2">
                         <div class="font-semibold text-gray-600">Penerbit</div>
-                        <div id="bookPublisher" class="col-span-2"></div>
+                        <div id="bookPublisher" class="col-span-2 text-gray-800"></div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-3 gap-2">
                         <div class="font-semibold text-gray-600">Tahun Terbit</div>
-                        <div id="bookYear" class="col-span-2"></div>
+                        <div id="bookYear" class="col-span-2 text-gray-800"></div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-3 gap-2">
                         <div class="font-semibold text-gray-600">Stok</div>
-                        <div id="bookStock" class="col-span-2"></div>
+                        <div id="bookStock" class="col-span-2 text-gray-800"></div>
                     </div>
                 </div>
             </div>

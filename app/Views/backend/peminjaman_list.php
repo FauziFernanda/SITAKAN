@@ -7,6 +7,95 @@
   <p class="text-gray-400 mb-6">Kelola data peminjaman dengan cepat, rapi dan terstruktur</p>
 </div>
 
+<div class="flex items-center justify-between mb-4">
+  <h3 class="text-gray-300 mb-3 tracking-wide">List Data Peminjaman</h3>
+</div>
+
+<!-- Search form -->
+<?php $s = $search ?? ['tgl_mulai' => '', 'tgl_selesai' => '', 'nama' => '', 'judul' => ''];
+      $mulai_day = $mulai_month = $mulai_year = '';
+      $selesai_day = $selesai_month = $selesai_year = '';
+      if (!empty($s['tgl_mulai'])) {
+          $d = explode('-', $s['tgl_mulai']);
+          if (count($d)===3) { $mulai_year=$d[0]; $mulai_month=(int)$d[1]; $mulai_day=(int)$d[2]; }
+      }
+      if (!empty($s['tgl_selesai'])) {
+          $d = explode('-', $s['tgl_selesai']);
+          if (count($d)===3) { $selesai_year=$d[0]; $selesai_month=(int)$d[1]; $selesai_day=(int)$d[2]; }
+      }
+      $months = [1=>'Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+?>
+
+<form id="searchForm" method="get" action="<?= base_url('backend/peminjaman') ?>" class="mb-6">
+  <div class="flex gap-3 flex-wrap items-end mb-3">
+    <div class="flex-1">
+      <label class="text-sm text-gray-400 block mb-1">Cari Nama Siswa</label>
+      <input type="text" name="nama" placeholder="Nama siswa" value="<?= esc($s['nama']) ?>" class="w-full px-3 py-2 rounded bg-gray-800 text-white" />
+    </div>
+    <div class="flex-1">
+      <label class="text-sm text-gray-400 block mb-1">Cari Judul Buku</label>
+      <input type="text" name="judul" placeholder="Judul buku" value="<?= esc($s['judul']) ?>" class="w-full px-3 py-2 rounded bg-gray-800 text-white" />
+    </div>
+    <div class="flex-none">
+      <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Cari</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem;">
+    <div>
+      <label class="text-sm text-gray-400 block mb-1">Start Date</label>
+      <div class="flex gap-2">
+        <select id="mulai_day" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="day">
+          <option value="">Hari</option>
+          <?php for ($i=1;$i<=31;$i++): ?>
+            <option value="<?= $i ?>" <?= ($mulai_day===$i)?'selected':'' ?> ><?= $i ?></option>
+          <?php endfor; ?>
+        </select>
+        <select id="mulai_month" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="month">
+          <option value="">Bulan</option>
+          <?php foreach($months as $num => $name): ?>
+            <option value="<?= $num ?>" <?= ($mulai_month===$num)?'selected':'' ?> ><?= $name ?></option>
+          <?php endforeach; ?>
+        </select>
+        <select id="mulai_year" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="year">
+          <option value="">Tahun</option>
+          <?php $curY = date('Y'); for($y=$curY; $y>=$curY-20; $y--): ?>
+            <option value="<?= $y ?>" <?= ($mulai_year===$y)?'selected':'' ?> ><?= $y ?></option>
+          <?php endfor; ?>
+        </select>
+      </div>
+      <div id="dateError" class="mt-2 text-sm text-red-400 hidden">rate tanggal wajib di isi keduanya</div>
+    </div>
+
+    <div>
+      <label class="text-sm text-gray-400 block mb-1">End Date</label>
+      <div class="flex gap-2">
+        <select id="selesai_day" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="day">
+          <option value="">Hari</option>
+          <?php for ($i=1;$i<=31;$i++): ?>
+            <option value="<?= $i ?>" <?= ($selesai_day===$i)?'selected':'' ?> ><?= $i ?></option>
+          <?php endfor; ?>
+        </select>
+        <select id="selesai_month" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="month">
+          <option value="">Bulan</option>
+          <?php foreach($months as $num => $name): ?>
+            <option value="<?= $num ?>" <?= ($selesai_month===$num)?'selected':'' ?> ><?= $name ?></option>
+          <?php endforeach; ?>
+        </select>
+        <select id="selesai_year" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="year">
+          <option value="">Tahun</option>
+          <?php $curY = date('Y'); for($y=$curY; $y>=$curY-20; $y--): ?>
+            <option value="<?= $y ?>" <?= ($selesai_year===$y)?'selected':'' ?> ><?= $y ?></option>
+          <?php endfor; ?>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" id="tgl_mulai" name="tgl_mulai" value="<?= esc($s['tgl_mulai']) ?>" />
+  <input type="hidden" id="tgl_selesai" name="tgl_selesai" value="<?= esc($s['tgl_selesai']) ?>" />
+</form>
+
 <div>
   <h3 class="text-gray-300 mb-3 tracking-wide">List Data Peminjaman</h3>
 
@@ -124,6 +213,65 @@ const csrfName = '<?= csrf_token() ?>';
 const csrfHash = '<?= csrf_hash() ?>';
 
 document.addEventListener('DOMContentLoaded', function(){
+  // --- compose date selects into hidden inputs for controller ---
+  function pad(n){ return (n<10? '0'+n : n); }
+
+  const mulaiDay = document.getElementById('mulai_day');
+  const mulaiMonth = document.getElementById('mulai_month');
+  const mulaiYear = document.getElementById('mulai_year');
+  const selesaiDay = document.getElementById('selesai_day');
+  const selesaiMonth = document.getElementById('selesai_month');
+  const selesaiYear = document.getElementById('selesai_year');
+  const hiddenMulai = document.getElementById('tgl_mulai');
+  const hiddenSelesai = document.getElementById('tgl_selesai');
+
+  function composeDate(dayEl, monEl, yrEl, targetEl) {
+    const d = dayEl.value; const m = monEl.value; const y = yrEl.value;
+    if (d && m && y) {
+      targetEl.value = y + '-' + (m.length===1? '0'+m : m) + '-' + pad(parseInt(d,10));
+    } else {
+      targetEl.value = '';
+    }
+  }
+
+  function initSelectsFromHidden(hiddenEl, dayEl, monEl, yrEl){
+    if (!hiddenEl || !hiddenEl.value) return;
+    const parts = hiddenEl.value.split('-');
+    if (parts.length===3){
+      yrEl.value = parts[0];
+      monEl.value = parseInt(parts[1],10);
+      dayEl.value = parseInt(parts[2],10);
+    }
+  }
+
+  initSelectsFromHidden(hiddenMulai, mulaiDay, mulaiMonth, mulaiYear);
+  initSelectsFromHidden(hiddenSelesai, selesaiDay, selesaiMonth, selesaiYear);
+
+  [mulaiDay, mulaiMonth, mulaiYear].forEach(el => el && el.addEventListener('change', ()=> composeDate(mulaiDay, mulaiMonth, mulaiYear, hiddenMulai)));
+  [selesaiDay, selesaiMonth, selesaiYear].forEach(el => el && el.addEventListener('change', ()=> composeDate(selesaiDay, selesaiMonth, selesaiYear, hiddenSelesai)));
+
+  // Client-side validation: require both Start and End if either is filled
+  const searchForm = document.getElementById('searchForm');
+  const dateError = document.getElementById('dateError');
+
+  if (searchForm) {
+    searchForm.addEventListener('submit', function(e){
+      composeDate(mulaiDay, mulaiMonth, mulaiYear, hiddenMulai);
+      composeDate(selesaiDay, selesaiMonth, selesaiYear, hiddenSelesai);
+
+      const start = hiddenMulai.value.trim();
+      const end = hiddenSelesai.value.trim();
+      if ((start && !end) || (!start && end)) {
+        e.preventDefault();
+        dateError.classList.remove('hidden');
+        dateError.scrollIntoView({behavior: 'smooth', block: 'center'});
+        return false;
+      }
+      dateError.classList.add('hidden');
+      return true;
+    });
+  }
+
   // Details modal
   document.querySelectorAll('.btn-details').forEach(function(el){
     el.addEventListener('click', function(e){
@@ -137,7 +285,6 @@ document.addEventListener('DOMContentLoaded', function(){
         try{ const dt = new Date(d); if (isNaN(dt)) return d; return dt.getDate() + ' - ' + (dt.getMonth()+1) + ' - ' + dt.getFullYear(); }catch(e){return d}
       }
       document.getElementById('d_tgl_pinjam').textContent = fmt(this.dataset.tgl_pinjam);
-      // Use tgl_selesai if present and valid; otherwise fall back to the original 'batas pengembalian' (tgl_kembali)
       let shownFinish = this.dataset.tgl_selesai;
       if (!shownFinish || shownFinish === '0000-00-00') {
         shownFinish = this.dataset.tgl_kembali;

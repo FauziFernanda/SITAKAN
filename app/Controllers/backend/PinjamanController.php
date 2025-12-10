@@ -13,12 +13,41 @@ class PinjamanController extends BaseController
         $pinjamModel = new PinjamModel();
         $perPage = 15;
         $page = (int) $this->request->getGet('page') ?: 1;
-        $peminjamans = $pinjamModel
+        
+        $tgl_mulai = trim((string) $this->request->getGet('tgl_mulai'));
+        $tgl_selesai = trim((string) $this->request->getGet('tgl_selesai'));
+        $nama = trim((string) $this->request->getGet('nama'));
+        $judul = trim((string) $this->request->getGet('judul'));
+        
+        if ((($tgl_mulai === '') && ($tgl_selesai !== '')) || (($tgl_mulai !== '') && ($tgl_selesai === ''))) {
+            session()->setFlashdata('error', 'rate tanggal wajib di isi keduanya');
+            $qs = http_build_query($this->request->getGet());
+            return redirect()->to(base_url('backend/peminjaman') . ($qs ? ('?' . $qs) : ''));
+        }
+        
+        $query = $pinjamModel
             ->select('pinjams.*, pinjams.nama_siswa as nama_siswa, bukus.judul as judul_buku')
             ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
-            ->where('(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = "" OR pinjams.tgl_selesai = "0000-00-00")', null, false)
-            ->orderBy('pinjams.id_pinjam', 'DESC')
-            ->paginate($perPage, 'peminjamans', $page);
+            ->where('(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = "" OR pinjams.tgl_selesai = "0000-00-00")', null, false);
+        
+        if ($tgl_mulai !== '' && $tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_pinjam >=', $tgl_mulai)
+                           ->where('pinjams.tgl_pinjam <=', $tgl_selesai);
+        } elseif ($tgl_mulai !== '') {
+            $query = $query->where('pinjams.tgl_pinjam >=', $tgl_mulai);
+        } elseif ($tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_pinjam <=', $tgl_selesai);
+        }
+        
+        if ($nama !== '') {
+            $query = $query->like('pinjams.nama_siswa', $nama);
+        }
+        
+        if ($judul !== '') {
+            $query = $query->like('bukus.judul', $judul);
+        }
+        
+        $peminjamans = $query->orderBy('pinjams.id_pinjam', 'DESC')->paginate($perPage, 'peminjamans', $page);
         $pager = $pinjamModel->pager;
 
         // mark overdue entries (denda) so frontend can style them
@@ -45,7 +74,8 @@ class PinjamanController extends BaseController
             'peminjamans' => $peminjamans,
             'pager' => $pager,
             'perPage' => $perPage,
-            'page' => $page
+            'page' => $page,
+            'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul]
         ]);
     }
 

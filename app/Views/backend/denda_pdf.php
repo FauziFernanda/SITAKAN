@@ -81,10 +81,16 @@
                     <td><?= esc($d['kelas'] ?? '-') ?></td>
                     <td><?= esc($d['judul_buku'] ?? '-') ?></td>
                     <td><?= $d['telat_hari'] ?? 0 ?> Hari</td>
-                    <td>Rp. <?= number_format($d['telat_hari'] * 500, 0, ',', '.') ?></td>
+                    <td><?= number_format($d['denda'] ?? (($d['telat_hari'] ?? 0) * ($denda_perhari ?? 500)), 0, ',', '.') ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" style="text-align:right;font-weight:bold;padding:10px;">Total Denda Keseluruhan</td>
+                <td style="font-weight:bold;padding:10px;"><?= number_format($total_denda ?? 0, 0, ',', '.') ?></td>
+            </tr>
+        </tfoot>
     </table>
 
     <div class="footer">
