@@ -7,8 +7,15 @@
   <p class="text-gray-400 mb-6">Kelola data peminjaman dengan cepat, rapi dan terstruktur</p>
 </div>
 
+<?php $qs = http_build_query(service('request')->getGet()); ?>
 <div class="flex items-center justify-between mb-4">
   <h3 class="text-gray-300 mb-3 tracking-wide">List Data Peminjaman</h3>
+  <a href="<?= base_url('backend/peminjaman/pdf') . ($qs ? ('?' . $qs) : '') ?>" class="px-4 py-2 bg-[#0f7a63] text-white rounded-md font-semibold flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    </svg>
+    Export PDF
+  </a>
 </div>
 
 <!-- Search form -->
@@ -17,11 +24,11 @@
       $selesai_day = $selesai_month = $selesai_year = '';
       if (!empty($s['tgl_mulai'])) {
           $d = explode('-', $s['tgl_mulai']);
-          if (count($d)===3) { $mulai_year=$d[0]; $mulai_month=(int)$d[1]; $mulai_day=(int)$d[2]; }
+          if (count($d)===3) { $mulai_year=$d[0]; $mulai_month=$d[1]; $mulai_day=$d[2]; }
       }
       if (!empty($s['tgl_selesai'])) {
           $d = explode('-', $s['tgl_selesai']);
-          if (count($d)===3) { $selesai_year=$d[0]; $selesai_month=(int)$d[1]; $selesai_day=(int)$d[2]; }
+          if (count($d)===3) { $selesai_year=$d[0]; $selesai_month=$d[1]; $selesai_day=$d[2]; }
       }
       $months = [1=>'Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 ?>
@@ -41,26 +48,26 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-2 gap-3" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem;">
+  <div class="grid grid-cols-2 gap-3">
     <div>
       <label class="text-sm text-gray-400 block mb-1">Start Date</label>
       <div class="flex gap-2">
         <select id="mulai_day" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="day">
           <option value="">Hari</option>
           <?php for ($i=1;$i<=31;$i++): ?>
-            <option value="<?= $i ?>" <?= ($mulai_day===$i)?'selected':'' ?> ><?= $i ?></option>
+            <option value="<?= $i ?>" <?= ($mulai_day===(string)$i)?'selected':'' ?> ><?= $i ?></option>
           <?php endfor; ?>
         </select>
         <select id="mulai_month" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="month">
           <option value="">Bulan</option>
           <?php foreach($months as $num => $name): ?>
-            <option value="<?= $num ?>" <?= ($mulai_month===$num)?'selected':'' ?> ><?= $name ?></option>
+            <option value="<?= $num ?>" <?= ($mulai_month===(string)$num)?'selected':'' ?> ><?= $name ?></option>
           <?php endforeach; ?>
         </select>
         <select id="mulai_year" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="year">
           <option value="">Tahun</option>
           <?php $curY = date('Y'); for($y=$curY; $y>=$curY-20; $y--): ?>
-            <option value="<?= $y ?>" <?= ($mulai_year===$y)?'selected':'' ?> ><?= $y ?></option>
+            <option value="<?= $y ?>" <?= ($mulai_year===(string)$y)?'selected':'' ?> ><?= $y ?></option>
           <?php endfor; ?>
         </select>
       </div>
@@ -73,19 +80,19 @@
         <select id="selesai_day" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="day">
           <option value="">Hari</option>
           <?php for ($i=1;$i<=31;$i++): ?>
-            <option value="<?= $i ?>" <?= ($selesai_day===$i)?'selected':'' ?> ><?= $i ?></option>
+            <option value="<?= $i ?>" <?= ($selesai_day===(string)$i)?'selected':'' ?> ><?= $i ?></option>
           <?php endfor; ?>
         </select>
         <select id="selesai_month" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="month">
           <option value="">Bulan</option>
           <?php foreach($months as $num => $name): ?>
-            <option value="<?= $num ?>" <?= ($selesai_month===$num)?'selected':'' ?> ><?= $name ?></option>
+            <option value="<?= $num ?>" <?= ($selesai_month===(string)$num)?'selected':'' ?> ><?= $name ?></option>
           <?php endforeach; ?>
         </select>
         <select id="selesai_year" class="px-3 py-2 rounded bg-gray-800 text-white text-sm" aria-label="year">
           <option value="">Tahun</option>
           <?php $curY = date('Y'); for($y=$curY; $y>=$curY-20; $y--): ?>
-            <option value="<?= $y ?>" <?= ($selesai_year===$y)?'selected':'' ?> ><?= $y ?></option>
+            <option value="<?= $y ?>" <?= ($selesai_year===(string)$y)?'selected':'' ?> ><?= $y ?></option>
           <?php endfor; ?>
         </select>
       </div>
@@ -234,18 +241,9 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
-  function initSelectsFromHidden(hiddenEl, dayEl, monEl, yrEl){
-    if (!hiddenEl || !hiddenEl.value) return;
-    const parts = hiddenEl.value.split('-');
-    if (parts.length===3){
-      yrEl.value = parts[0];
-      monEl.value = parseInt(parts[1],10);
-      dayEl.value = parseInt(parts[2],10);
-    }
-  }
-
-  initSelectsFromHidden(hiddenMulai, mulaiDay, mulaiMonth, mulaiYear);
-  initSelectsFromHidden(hiddenSelesai, selesaiDay, selesaiMonth, selesaiYear);
+  // Compose initial hidden values from visible dropdowns (PHP already set correct values)
+  composeDate(mulaiDay, mulaiMonth, mulaiYear, hiddenMulai);
+  composeDate(selesaiDay, selesaiMonth, selesaiYear, hiddenSelesai);
 
   [mulaiDay, mulaiMonth, mulaiYear].forEach(el => el && el.addEventListener('change', ()=> composeDate(mulaiDay, mulaiMonth, mulaiYear, hiddenMulai)));
   [selesaiDay, selesaiMonth, selesaiYear].forEach(el => el && el.addEventListener('change', ()=> composeDate(selesaiDay, selesaiMonth, selesaiYear, hiddenSelesai)));

@@ -21,6 +21,32 @@
 </div>
 
 <div class="-mt-8">
+  <h3 class="text-gray-300 mb-3 tracking-wide">3 Buku Terlaris</h3>
+  <table class="w-full text-sm text-left border border-gray-700 tracking-wide mb-8">
+    <thead class="bg-[#2A2A2A] text-gray-300">
+      <tr>
+        <th class="px-6 py-3">Judul Buku</th>
+        <th class="px-6 py-3">Penulis</th>
+        <th class="px-6 py-3">Jumlah Pinjam</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if (!empty($topBooks) && is_array($topBooks)): ?>
+        <?php foreach ($topBooks as $b): ?>
+          <tr class="border-t border-gray-700">
+            <td class="px-6 py-3"><?= esc($b['judul']) ?></td>
+            <td class="px-6 py-3"><?= esc($b['penulis']) ?></td>
+            <td class="px-6 py-3"><?= esc($b['jml_pinjam']) ?> kali</td>
+          </tr>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <tr class="border-t border-gray-700">
+          <td class="px-6 py-3 text-gray-400 italic" colspan="3">Belum ada data peminjaman</td>
+        </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+
   <h3 class="text-gray-300 mb-3 tracking-wide">List Buku</h3>
   <table class="w-full text-sm text-left border border-gray-700 tracking-wide">
     <thead class="bg-[#2A2A2A] text-gray-300">

@@ -5,6 +5,8 @@ namespace App\Controllers\Backend;
 use App\Controllers\BaseController;
 use App\Models\BukuModel; // Tambahkan ini
 use App\Models\PinjamModel; // Tambahkan ini
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class PinjamanController extends BaseController
 {
@@ -19,10 +21,24 @@ class PinjamanController extends BaseController
         $nama = trim((string) $this->request->getGet('nama'));
         $judul = trim((string) $this->request->getGet('judul'));
         
+        // Validate: if either date is filled, both must be filled
         if ((($tgl_mulai === '') && ($tgl_selesai !== '')) || (($tgl_mulai !== '') && ($tgl_selesai === ''))) {
-            session()->setFlashdata('error', 'rate tanggal wajib di isi keduanya');
-            $qs = http_build_query($this->request->getGet());
-            return redirect()->to(base_url('backend/peminjaman') . ($qs ? ('?' . $qs) : ''));
+            // Don't redirect with error params to avoid loop - just show empty results with error
+            $tgl_mulai = '';
+            $tgl_selesai = '';
+            $peminjamans = [];
+            $pager = null;
+            $perPage = 15;
+            $page = 1;
+            
+            return view('backend/peminjaman_list', [
+                'peminjamans' => $peminjamans,
+                'pager' => $pager,
+                'perPage' => $perPage,
+                'page' => $page,
+                'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul],
+                'error' => 'rate tanggal wajib di isi keduanya'
+            ]);
         }
         
         $query = $pinjamModel
@@ -75,8 +91,77 @@ class PinjamanController extends BaseController
             'pager' => $pager,
             'perPage' => $perPage,
             'page' => $page,
-            'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul]
+            'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul],
+            'error' => ''
         ]);
+    }
+
+    public function pdf()
+    {
+        // Get peminjaman data; if date-range filters are provided via GET, apply them.
+        $tgl_mulai = trim((string) $this->request->getGet('tgl_mulai'));
+        $tgl_selesai = trim((string) $this->request->getGet('tgl_selesai'));
+        $nama = trim((string) $this->request->getGet('nama'));
+        $judul = trim((string) $this->request->getGet('judul'));
+
+        $pinjamModel = new PinjamModel();
+
+        $query = $pinjamModel
+            ->select('pinjams.*, pinjams.nama_siswa as nama_siswa, bukus.judul as judul_buku')
+            ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
+            ->where('(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = "" OR pinjams.tgl_selesai = "0000-00-00")', null, false);
+        
+        if ($tgl_mulai !== '' && $tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_pinjam >=', $tgl_mulai)
+                           ->where('pinjams.tgl_pinjam <=', $tgl_selesai);
+        } elseif ($tgl_mulai !== '') {
+            $query = $query->where('pinjams.tgl_pinjam >=', $tgl_mulai);
+        } elseif ($tgl_selesai !== '') {
+            $query = $query->where('pinjams.tgl_pinjam <=', $tgl_selesai);
+        }
+        
+        if ($nama !== '') {
+            $query = $query->like('pinjams.nama_siswa', $nama);
+        }
+        
+        if ($judul !== '') {
+            $query = $query->like('bukus.judul', $judul);
+        }
+
+        $rows = $query->orderBy('pinjams.tgl_pinjam', 'DESC')->findAll();
+
+        // Format today's date in Indonesian
+        $timestamp = time();
+        $days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+        
+        $day = $days[date('w', $timestamp)];
+        $date = date('j', $timestamp);
+        $month = $months[date('n', $timestamp) - 1];
+        $year = date('Y', $timestamp);
+        
+        $tanggal = "$day, $date $month $year";
+
+        // Load the PDF view
+        $html = view('backend/peminjaman_pdf', [
+            'peminjamans' => $rows,
+            'tanggal' => $tanggal,
+        ]);
+
+        // Generate PDF
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('defaultFont', 'Arial');
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Stream PDF to browser
+        return $this->response->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment;filename="Laporan_Peminjaman_Perpustakaan.pdf"')
+            ->setBody($dompdf->output());
     }
 
     public function create()

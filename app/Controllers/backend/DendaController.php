@@ -19,24 +19,28 @@ class DendaController extends BaseController
         $nama = trim((string) $this->request->getGet('nama'));
         $judul = trim((string) $this->request->getGet('judul'));
         
+        // Validate: if either date is filled, both must be filled
         if ((($tgl_mulai === '') && ($tgl_selesai !== '')) || (($tgl_mulai !== '') && ($tgl_selesai === ''))) {
-            session()->setFlashdata('error', 'rate tanggal wajib di isi keduanya');
-            $qs = http_build_query($this->request->getGet());
-            return redirect()->to(base_url('backend/denda') . ($qs ? ('?' . $qs) : ''));
+            // Don't redirect with error params to avoid loop - just show empty results with error
+            return $this->renderDendaList('', '', $nama, $judul, 'rate tanggal wajib di isi keduanya');
         }
 
         return $this->renderDendaList($tgl_mulai, $tgl_selesai, $nama, $judul);
     }
 
-    private function renderDendaList($tgl_mulai = '', $tgl_selesai = '', $nama = '', $judul = '')
+    private function renderDendaList($tgl_mulai = '', $tgl_selesai = '', $nama = '', $judul = '', $error = '')
     {
         $pinjamModel = new PinjamModel();
 
         $query = $pinjamModel
             ->select('pinjams.*, bukus.judul as judul_buku')
             ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
-            ->where("(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = '' OR pinjams.tgl_selesai = '0000-00-00')", null, false)
-            ->where('pinjams.tgl_kembali <', date('Y-m-d'));
+            ->where("(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = '' OR pinjams.tgl_selesai = '0000-00-00')", null, false);
+        
+        // Only apply "tgl_kembali < today" if no date range filter is specified
+        if ($tgl_mulai === '' && $tgl_selesai === '') {
+            $query = $query->where('pinjams.tgl_kembali <', date('Y-m-d'));
+        }
         
         if ($tgl_mulai !== '' && $tgl_selesai !== '') {
             $query = $query->where('pinjams.tgl_kembali >=', $tgl_mulai)
@@ -83,7 +87,8 @@ class DendaController extends BaseController
             'dendas' => $rows, 
             'total_denda' => $total, 
             'denda_perhari' => $perhari,
-            'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul]
+            'search' => ['tgl_mulai' => $tgl_mulai, 'tgl_selesai' => $tgl_selesai, 'nama' => $nama, 'judul' => $judul],
+            'error' => $error
         ]);
     }
 
@@ -100,8 +105,12 @@ class DendaController extends BaseController
         $query = $pinjamModel
             ->select('pinjams.*, bukus.judul as judul_buku')
             ->join('bukus', 'bukus.id_buku = pinjams.id_buku', 'left')
-            ->where("(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = '' OR pinjams.tgl_selesai = '0000-00-00')", null, false)
-            ->where('pinjams.tgl_kembali <', date('Y-m-d'));
+            ->where("(pinjams.tgl_selesai IS NULL OR pinjams.tgl_selesai = '' OR pinjams.tgl_selesai = '0000-00-00')", null, false);
+
+        // Only apply "tgl_kembali < today" if no date range filter is specified
+        if ($tgl_mulai === '' && $tgl_selesai === '') {
+            $query = $query->where('pinjams.tgl_kembali <', date('Y-m-d'));
+        }
 
         // Apply optional date-range filter (only if both start and end provided)
         if ($tgl_mulai !== '' && $tgl_selesai !== '') {

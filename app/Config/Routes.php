@@ -25,6 +25,7 @@ $routes->group('backend', ['filter' => 'auth'], function($routes) {
     $routes->get('home', 'Backend\Home::index');
     $routes->get('buku_list', 'Backend\BukuController::index');
     $routes->get('peminjaman', 'Backend\PinjamanController::index');
+    $routes->get('peminjaman/pdf', 'Backend\PinjamanController::pdf');
     $routes->get('denda', 'Backend\DendaController::index');
     $routes->get('denda/pdf', 'Backend\DendaController::pdf');
     $routes->get('riwayat', 'Backend\RiwayatController::index');
