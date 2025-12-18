@@ -1,0 +1,1123 @@
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Styles for Peminjaman list (table + action buttons) */
+.peminjaman-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+.peminjaman-table thead th {
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+.peminjaman-table th, .peminjaman-table td { border-bottom: 1px solid rgba(255,255,255,0.04); word-wrap: break-word; overflow-wrap: break-word; }
+.peminjaman-table tbody td { padding: 1.25rem 1.5rem; word-break: break-word; white-space: normal; }
+
+.action-accept {
+  background: #16a34a; /* green */
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.action-delete {
+  background: #dc2626; /* red */
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Responsive small-screen behavior: stack cells */
+@media (max-width: 640px) {
+  .peminjaman-table thead { display: none; }
+  .peminjaman-table tbody td { display: block; width: 100%; }
+}
+
+nav a.active {
+    color: #25622D; /* hijau tua */
+    font-weight: 600;
+}
+
+.home-hero {
+        margin-top: 50px;       /* jarak antara header dan section hijau */
+        margin-bottom: 40px;    /* jarak bawah section hijau ke elemen berikutnya */
+
+    }
+
+@media (max-width: 768px) {
+    .home-hero {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
+footer {
+    line-height: 1.6;
+}
+
+
+
+/* ======= CUSTOM STYLE: JADWAL BUKA ======= */
+.schedule-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.schedule-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.schedule-header {
+    background-color: #25622D;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.schedule-body {
+    padding: 24px 28px;
+    text-align: center;
+}
+
+/* Warna teks & note sesuai figma */
+.schedule-body p {
+    margin: 0;
+}
+
+.schedule-body hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Untuk teks kecil */
+.schedule-body p.text-sm {
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+
+nav a.active {
+    color: #2e8b57 !important; /* hijau sedang (lebih terang dari green-700) */
+    font-weight: 600 !important;
+}
+
+nav a {
+    transition: color 0.25s ease, font-weight 0.25s ease;
+}
+
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-header img {
+    width: 90px;
+    margin: 0 auto 10px auto;
+    display: block;
+}
+
+.login-header h1 {
+    color: #25622D;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.login-header p {
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.login-box {
+    background-color: #ECF9EF;
+    border: 1px solid #2E8B57;
+    border-radius: 5px;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.login-box label {
+    font-size: 0.9rem;
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f1f1f1;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+}
+
+.login-box input[type="text"]:focus,
+.login-box input[type="password"]:focus {
+    outline: none;
+    border-color: #2E8B57;
+}
+
+.login-box .remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.login-box button {
+    width: 100%;
+    background-color: #25622D;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+    background-color: #1E4E22;
+}
+
+
+/* =============== BACKEND DARK MODE STYLE =============== */
+body {
+  background-color: #1E1E1E;
+  color: #E0E0E0;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+
+/* Tombol logout */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D32F2F;
+  color: #fff;
+  padding: 10px;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #B71C1C;
+}
+
+
+/* ======================= */
+/* === BACKEND SIDEBAR === */
+/* ======================= */
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  margin: 0 10px;
+  border-radius: 6px;
+  color: #d1d5db; /* abu terang */
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.sidebar-link:hover {
+  background-color: #2b2b2b; /* abu sedang */
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background-color: #3a3a3a; /* abu aktif */
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Profil + Logout */
+.logout-btn {
+  background-color: #c62828;
+  color: white;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ====== LAYOUT BACKEND FIXED HEADER & SIDEBAR ====== */
+.backend-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar tetap di kiri */
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16rem; /* sesuai w-64 */
+  background-color: #181818;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+/* Header tetap di atas */
+.backend-header {
+  position: fixed;
+  top: 0;
+  left: 16rem; /* sama seperti lebar sidebar */
+  right: 0;
+  height: 64px;
+  background-color: #202020;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid #333;
+  z-index: 40;
+}
+
+/* ====== BACKEND LAYOUT FIX ====== */
+.backend-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar tetap di kiri */
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16rem; /* sesuai w-64 */
+  background-color: #181818;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+/* Konten utama scroll di sini */
+.backend-content {
+  margin-left: 16rem; /* geser agar tidak ketimpa sidebar */
+  padding: 40px 60px; /* sedikit lebih longgar */
+  height: 100vh;
+  overflow-y: auto;
+  /* ⛔ HAPUS background-color di sini */
+}
+
+/* Hapus juga duplikasi ini di body */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #E0E0E0;
+  background-color: #1E1E1E; /* ini saja cukup, jangan ulang di backend-content */
+}
+
+/* ====== MODAL: Detail / Confirm (custom styles matching design) ====== */
+.custom-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.custom-modal {
+  width: 60%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.custom-modal .modal-header {
+  background: #167a63; /* green header like design */
+  padding: 16px 20px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.custom-modal .modal-header .modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.custom-modal .modal-header .modal-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+}
+.custom-modal .modal-body {
+  padding: 26px 30px;
+  background: #e9e9e9; /* light gray body */
+  color: #000000; /* use black text per request */
+}
+.custom-modal .modal-body p { margin: 6px 0; font-weight: 600; }
+.custom-modal .modal-body p span.value { font-weight: 500; margin-left: 8px; }
+
+/* smaller screens */
+@media (max-width: 900px) {
+  .custom-modal { width: 92%; }
+}
+
+/* Global toast (top-right) */
+.global-toast {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 99999;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  color: #ffffff;
+  display: none;
+  font-weight: 600;
+}
+.global-toast.success { background: #16a34a; }
+.global-toast.error { background: #dc2626; }
+
+/* Denda (overdue) styling: red highlight for name/title */
+.denda-mark {
+  color: #ff4d4f; /* red-ish */
+  font-weight: 700;
+}
+
+/* Confirm return button in modal: green background with WHITE text per request */
+#confirmReturn {
+  background: #16a34a; /* green */
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#confirmReturn:hover { background: #0f7a42; }
+
+/* Confirm delete button: red background with white text */
+#confirmDelete {
+  background: #dc2626; /* red */
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#confirmDelete:hover { background: #b91c1c; }
+
+/* Ensure confirm modal body text and headings use black (override darker theme) */
+#modalConfirmReturn .rounded-lg,
+#modalConfirmDelete .rounded-lg {
+  color: #000000; /* black text for modal content */
+}
+
+/* Ensure cancel button text is visible (black) in confirm modals */
+#modalConfirmReturn #cancelReturn,
+#modalConfirmDelete #cancelDelete {
+  color: #000000;
+  background: transparent;
+  border: none;
+}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Styles for Peminjaman list (table + action buttons) */
+.peminjaman-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+.peminjaman-table thead th {
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+.peminjaman-table th, .peminjaman-table td { border-bottom: 1px solid rgba(255,255,255,0.04); word-wrap: break-word; overflow-wrap: break-word; }
+.peminjaman-table tbody td { padding: 1.25rem 1.5rem; word-break: break-word; white-space: normal; }
+
+.action-accept {
+  background: #16a34a; /* green */
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.action-delete {
+  background: #dc2626; /* red */
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .home-hero {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
+footer {
+    line-height: 1.6;
+}
+
+
+
+/* ======= CUSTOM STYLE: JADWAL BUKA ======= */
+.schedule-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.schedule-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.schedule-header {
+    background-color: #25622D;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.schedule-body {
+    padding: 24px 28px;
+    text-align: center;
+}
+
+/* Warna teks & note sesuai figma */
+.schedule-body p {
+    margin: 0;
+}
+
+.schedule-body hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Untuk teks kecil */
+.schedule-body p.text-sm {
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+
+nav a.active {
+    color: #2e8b57 !important; /* hijau sedang (lebih terang dari green-700) */
+    font-weight: 600 !important;
+}
+
+nav a {
+    transition: color 0.25s ease, font-weight 0.25s ease;
+}
+
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-header img {
+    width: 90px;
+    margin: 0 auto 10px auto;
+    display: block;
+}
+
+.login-header h1 {
+    color: #25622D;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.login-header p {
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.login-box {
+    background-color: #ECF9EF;
+    border: 1px solid #2E8B57;
+    border-radius: 5px;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.login-box label {
+    font-size: 0.9rem;
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f1f1f1;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+}
+
+.login-box input[type="text"]:focus,
+.login-box input[type="password"]:focus {
+    outline: none;
+    border-color: #2E8B57;
+}
+
+.login-box .remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.login-box button {
+    width: 100%;
+    background-color: #25622D;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+    background-color: #1E4E22;
+}
+
+
+/* =============== BACKEND DARK MODE STYLE =============== */
+body {
+  background-color: #1E1E1E;
+  color: #E0E0E0;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+
+/* Tombol logout */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D32F2F;
+  color: #fff;
+  padding: 10px;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #B71C1C;
+}
+
+
+/* ======================= */
+/* === BACKEND SIDEBAR === */
+/* ======================= */
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  margin: 0 10px;
+  border-radius: 6px;
+  color: #d1d5db; /* abu terang */
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.sidebar-link:hover {
+  background-color: #2b2b2b; /* abu sedang */
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background-color: #3a3a3a; /* abu aktif */
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Profil + Logout */
+.logout-btn {
+  background-color: #c62828;
+  color: white;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ====== LAYOUT BACKEND FIXED HEADER & SIDEBAR ====== */
+.backend-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar tetap di kiri */
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16rem; /* sesuai w-64 */
+  background-color: #181818;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+/* Header tetap di atas */
+.backend-header {
+  position: fixed;
+  top: 0;
+  left: 16rem; /* sama seperti lebar sidebar */
+  right: 0;
+  height: 64px;
+  background-color: #202020;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid #333;
+  z-index: 40;
+}
+
+/* ====== BACKEND LAYOUT FIX ====== */
+.backend-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar tetap di kiri */
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16rem; /* sesuai w-64 */
+  background-color: #181818;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+/* Konten utama scroll di sini */
+.backend-content {
+  margin-left: 16rem; /* geser agar tidak ketimpa sidebar */
+  padding: 40px 60px; /* sedikit lebih longgar */
+  height: 100vh;
+  overflow-y: auto;
+  /* ⛔ HAPUS background-color di sini */
+}
+
+/* Hapus juga duplikasi ini di body */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #E0E0E0;
+  background-color: #1E1E1E; /* ini saja cukup, jangan ulang di backend-content */
+}
+
+/* ====== MODAL: Detail / Confirm (custom styles matching design) ====== */
+.custom-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.custom-modal {
+  width: 60%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.custom-modal .modal-header {
+  background: #167a63; /* green header like design */
+  padding: 16px 20px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.custom-modal .modal-header .modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.custom-modal .modal-header .modal-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+}
+.custom-modal .modal-body {
+  padding: 26px 30px;
+  background: #e9e9e9; /* light gray body */
+  color: #000000; /* use black text per request */
+}
+.custom-modal .modal-body p { margin: 6px 0; font-weight: 600; }
+.custom-modal .modal-body p span.value { font-weight: 500; margin-left: 8px; }
+
+/* smaller screens */
+@media (max-width: 900px) {
+  .custom-modal { width: 92%; }
+}
+
+/* Global toast (top-right) */
+.global-toast {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 99999;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  color: #ffffff;
+  display: none;
+  font-weight: 600;
+}
+.global-toast.success { background: #16a34a; }
+.global-toast.error { background: #dc2626; }
+
+/* Denda (overdue) styling: red highlight for name/title */
+.denda-mark {
+  color: #ff4d4f; /* red-ish */
+  font-weight: 700;
+}
+
+/* Confirm return button in modal: green background with WHITE text per request */
+#confirmReturn {
+  background: #16a34a; /* green */
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#confirmReturn:hover { background: #0f7a42; }
+
+/* Confirm delete button: red background with white text */
+#confirmDelete {
+  background: #dc2626; /* red */
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#confirmDelete:hover { background: #b91c1c; }
+
+/* Ensure confirm modal body text and headings use black (override darker theme) */
+#modalConfirmReturn .rounded-lg,
+#modalConfirmDelete .rounded-lg {
+  color: #000000; /* black text for modal content */
+}
+
+/* Ensure cancel button text is visible (black) in confirm modals */
+#modalConfirmReturn #cancelReturn,
+#modalConfirmDelete #cancelDelete {
+  color: #000000;
+  background: transparent;
+  border: none;
+}
+
+/* ====== FRONTEND: BOOK LIST CARD ====== */
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0,1fr));
+  gap: 2rem;
+  justify-items: center; /* center each card horizontally */
+  align-items: stretch; /* make cards stretch to equal height */
+}
+@media (min-width: 640px) { .books-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (min-width: 768px) { .books-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+
+.book-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 12px 22px rgba(16,24,40,0.06);
+  padding: 14px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  width: 210px; /* slightly increased to match requested +4px */
+  margin: 16px auto 32px auto; /* shift down 16px, 32px margin bottom */
+  min-height: 360px; /* ensure consistent card height so footer can stick to bottom */
+}
+.book-card:hover { transform: translateY(-6px); box-shadow: 0 18px 30px rgba(16,24,40,0.09); }
+
+/* subtle layered paper shadow behind the card */
+.book-card::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 10px;
+  right: -6px;
+  bottom: -10px;
+  background: rgba(0,0,0,0.02);
+  border-radius: 14px;
+  z-index: -1;
+}
+
+.cover-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 10px 20px rgba(16,24,40,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  margin-top: -25px; /* reduced from -40px to prevent card overflow above header */
+}
+.cover-box img { width: 140px; height: 200px; object-fit: cover; border-radius: 8px; display:block; }
+
+/* Book detail modal thumbnail gallery */
+.main-image-container {
+  background: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 280px;
+  margin: 0 auto;
+}
+.main-image-container img {
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Thumbnail row container */
+.thumb-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+/* Individual thumbnail */
+.thumb {
+  flex: 0 0 auto;
+  width: 70px;
+  height: 90px;
+  border: 2px solid #e5e5e5;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumb:hover {
+  border-color: #25622D;
+  transform: scale(1.05);
+}
+.thumb.active {
+  border-color: #25622D;
+  box-shadow: 0 0 8px rgba(37, 98, 45, 0.4);
+}
+
+.book-title { font-size: 15px; line-height: 1.35; font-weight: 700; color: #0f172a; text-align:center; margin: 12px 0 10px; padding: 0 8px; }
+.book-meta { width: 100%; display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 0 12px; margin-top: auto; flex-wrap: nowrap; }
+.book-stock { color:#6b7280; font-size: 14px; white-space: nowrap; margin-right: 8px; }
+.btn-detailss { background:#25622D; color:#fff; padding:10px 16px; border-radius:12px; text-decoration:none; display:inline-block; font-weight:700; flex-shrink: 0; margin-left: 8px; }
+.btn-detailss:hover {
+  background:#1f5a27; 
+}
+
+
+.btn-details {
+  background: transparent;      /* tanpa warna isi */
+  color: white;                 /* teks putih */
+  border: 2px solid white;      /* garis putih */
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+.btn-details:hover {
+  background: #1f5a27;          /* warna hijau gelap saat dihover */
+  border-color: #1f5a27;        /* border ikut berubah */
+  color: white;                 /* tetap putih */
+  text-decoration: none !important;
+}
+
+/* ensure full-bleed green background sits flush with page edges */
+.full-bleed-green { width: 100%; background: #F0FFF3; }
+
+/* Book detail modal custom styling */
+#bookDetailModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  overflow-y: auto;
+  z-index: 50;
+  padding: 20px 10px;
+}
+
+#bookDetailModal.hidden {
+  display: none;
+}
+
+#bookDetailModal:not(.hidden) {
+  display: block;
+}
+
+.modal-content {
+  background: white;
+  width: 95%;
+  max-width: 650px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  padding: 18px;
+  position: relative;
+}
+
+.modal-content .flex {
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .modal-content .flex {
+    flex-direction: row;
+  }
+}
+
+
+
+
+/* Untuk mengecilkan popup logout */
+.swal-custom-height .swal2-icon {
+  font-size: 1em; /* Mengecilkan ikon */
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.swal-custom-height .swal2-title {
+  font-size: 1.25em; /* Mengecilkan judul */
+  padding-top: 15px;
+}
+
+.swal-custom-height .swal2-html-container {
+  font-size: 0.9em; /* Mengecilkan teks */
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
